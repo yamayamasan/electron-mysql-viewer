@@ -1,0 +1,102 @@
+<ng-include src="'views/left.html'"></ng-include>
+
+<div class="right_col" ng-init='init()'>
+  
+  <div>
+
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Graphical</h3>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_content">
+
+          <div>
+            <div class="btn-group">
+              <a class="btn btn-app btn-xs" ng-click="exec()">
+                <i class="fa fa-play"></i>
+              </a>
+              <a class="btn btn-app btn-xs" ng-click="stop()">
+                <i class="fa fa-pause"></i>
+              </a>
+
+              <select ng-model="seletedLimit" ng-options="limit.value as limit.label for limit in limiters">
+              </select>
+
+              <a class="btn btn-app btn-xs" ng-click="goto('graphical')">
+                <i class="fa fa-pie-chart"></i>
+              </a>
+            </div>
+
+            <div ui-ace="{
+              useWrapMode : true,
+              showGutter: false,
+              mode: 'sql',
+              onLoad: aceLoaded,
+              require: ['ace/ext/language_tools'],
+              advanced: {
+                enableSnippets: true,
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true
+              }
+            }" style="height: 200px"></div>
+          </div>
+
+        </div><!-- x_content -->
+      </div>
+    </div>
+  </div>
+  <!-- editor end -->
+<!--
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Info</h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li>
+              <a class="collapse-link" ng-click="viewCnt = !viewCnt">
+                <i ng-class="{'fa fa-chevron-up': viewCnt, 'fa fa-chevron-down': !viewCnt}"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content" ng-show="viewCnt" ng-init="viewCnt=true">
+          <div class="">
+            <p ng-if="total_query_count">count: {{ total_query_count }}</p>
+            <p ng-if="exec_query">{{ exec_query }}</p>
+            <p ng-if="localQueryTime">{{ localQueryTime }}ms</p>
+          </div>
+
+          <a class="btn btn-app btn-xs" ng-click="downloadCsv()"　ng-if="exec_query">
+            <i class="fa fa-download"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>-->
+
+
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_content">
+
+          <div id="bar_chart" style="height: 400px;width: 700px"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  </div>
+</div>
+

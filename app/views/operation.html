@@ -1,0 +1,193 @@
+<ng-include src="'views/left.html'"></ng-include>
+
+<div class="right_col" ng-init='init()'>
+  
+  <div>
+
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Operation [{{ connectionName }}]</h3>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_content">
+
+          <div>
+            <div class="btn-group">
+              <a class="btn btn-app btn-xs" ng-click="exec()">
+                <i class="fa fa-play"></i>
+              </a>
+              <a class="btn btn-app btn-xs" ng-click="stop()">
+                <i class="fa fa-pause"></i>
+              </a>
+
+              <select ng-model="seletedLimit" ng-options="limit.value as limit.label for limit in limiters">
+              </select>
+
+              <a class="btn btn-app btn-xs" ng-click="goto('graphical')">
+                <i class="fa fa-pie-chart"></i>
+              </a>
+            </div>
+
+            <div ui-ace="{
+              useWrapMode : true,
+              showGutter: true,
+              mode: 'sql',
+              onLoad: aceLoaded,
+              require: ['ace/ext/language_tools']
+            }" style="height: 200px"></div>
+          </div>
+
+        </div><!-- x_content -->
+      </div>
+    </div>
+  </div>
+  <!-- editor end -->
+
+  <div class="row" ng-if="exec_query">
+    <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom: -27px">
+      <div class="x_panel">
+        <div class="x_content">
+          <a class="btn btn-app btn-xs" ng-click="downloadCsv()">
+            <i class="fa fa-download"></i>
+          </a>
+
+          <a class="btn btn-app btn-xs" data-toggle="modal" data-target=".bs-example-modal-sm">
+            <i class="fa fa-filter"></i>
+          </a>
+
+          <a class="btn btn-app btn-xs" ng-click="autoReload(true)">
+            <i class="fa fa-play-circle"></i>
+          </a>
+
+          <a class="btn btn-app btn-xs" ng-click="autoReload(false)">
+            <i class="fa fa-stop"></i>
+          </a>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- buttons -->
+
+  <div class="row" ng-if="exec_query">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_content">
+          
+          <div class="table-responsive max_height_700" scroll-e>
+            <table class="">
+              <thead>
+                <tr class="headings">
+                  <th>#</th>
+                  <th ng-repeat="col in columns" class="column-title" ng-click="sort(col)">
+                    {{ col }}
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr ng-repeat="row in rows">
+                  <td ng-click="clickRow($index)">{{ $index + 1}}</td>
+                  <td ng-repeat="data in row" >
+                    <input type="text" value="{{ data | convnull | datefmt }}" readonly="true" on-click-row />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <scroll-drt></scroll-drt>
+            <!--<table id="sheet"></table>-->
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="exec_query">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Info</h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li>
+              <a class="collapse-link" ng-click="viewCnt = !viewCnt">
+                <i ng-class="{'fa fa-chevron-up': viewCnt, 'fa fa-chevron-down': !viewCnt}"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content" ng-show="viewCnt" ng-init="viewCnt=true">
+          <div class="">
+            <p ng-if="total_query_count">count: {{ total_query_count }}</p>
+            <p ng-if="exec_query">{{ exec_query }}</p>
+            <p ng-if="localQueryTime">{{ localQueryTime }}ms</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- info end -->
+  
+  <modal-checker-small sid="columns-checker" datas="{{ columns }}" title="columns" datakey="columns" callback="modalChecked"></modal-checker-small>
+
+  <!--  
+  <div class="modal fade bs-example-modal-sm in" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Modal title</h4>
+        </div>
+        <div class="modal-body">
+          <h4>Text in a modal</h4>
+          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
+          <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  -->
+
+  </div>
+  
+  <!-- info -->
+  <!--
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Info</h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li>
+              <a class="collapse-link" ng-click="viewCnt = !viewCnt">
+                <i ng-class="{'fa fa-chevron-up': viewCnt, 'fa fa-chevron-down': !viewCnt}"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <a class="btn btn-app btn-xs" ng-click="downloadCsv()" ng-if="exec_query">
+            <i class="fa fa-download"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  -->
+
+</div>
+

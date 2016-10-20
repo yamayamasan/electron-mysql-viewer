@@ -1,5 +1,5 @@
 {
-  "name": "sql",
+  "name": "viewmysql",
   "version": "0.0.1",
   "description": "",
   "main": "main.js",
@@ -9,20 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "angular2": "^2.0.0-beta.15",
+    "angular-new-router": "^0.5.3",
     "co": "^4.6.0",
-    "co-each": "^0.1.0",
-    "es6-shim": "^0.35.0",
-    "eventemitter2": "^1.0.1",
-    "keyboardjs": "^2.2.0",
-    "mysql": "^2.10.2",
-    "ramda": "^0.21.0",
-    "reflect-metadata": "^0.1.2",
-    "rxjs": "^5.0.0-beta.2",
-    "split-pane": "^0.5.1",
-    "zone.js": "^0.6.12"
-  },
-  "devDependencies": {
-    "tunnel-ssh": "^3.2.1-beta"
+    "dexie": "^1.4.2",
+    "lodash": "^4.16.4",
+    "moment": "^2.15.1",
+    "mysql": "^2.11.1",
+    "tunnel-ssh": "3.2.1-beta"
   }
 }

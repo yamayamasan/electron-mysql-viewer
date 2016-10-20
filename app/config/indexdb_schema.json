@@ -1,0 +1,33 @@
+{
+  "connections": {
+    "version": 1,
+    "columns": [
+      "++id",
+      "type",
+      "name",
+      "sshHost",
+      "sshUsername",
+      "sshPassword", 
+      "mysqlHost", 
+      "mysqlPort",
+      "mysqlUser",
+      "mysqlPassword",
+      "mysqlDatabase",
+      "sshPrivatekey",
+      "mysqlDisthost",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "query": {
+    "version": 1,
+    "columns": [
+      "++id",
+      "connection_id",
+      "tab_id",
+      "text",
+      "created_at",
+      "updated_at"
+    ]
+  }
+}

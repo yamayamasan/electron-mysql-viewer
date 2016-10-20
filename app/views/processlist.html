@@ -1,0 +1,63 @@
+<ng-include src="'views/left.html'"></ng-include>
+
+<div class="right_col" ng-init='init()'>
+  
+  <div>
+
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Process List [{{ localData.name }}]</h3>
+    </div>
+
+    <div class="title_right">
+      <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right">
+
+          <a class="btn btn-app btn-xxs" ng-click="autoReload(true)" ng-class="{active: btnActive}">
+            <i class="fa fa-play-circle"></i>
+          </a>
+
+          <a class="btn btn-app btn-xxs" ng-click="autoReload(false)" ng-class="{active: !btnActive}">
+            <i class="fa fa-stop"></i>
+          </a>
+      </div>
+    </div>
+
+  </div>
+  <div class="clearfix"></div>
+  
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_content">
+          
+          <div class="table-responsive">
+            <table class="">
+              <thead>
+                <tr class="headings">
+                  <th>#</th>
+                  <th ng-repeat="col in columns" class="column-title" ng-click="sort(col)">
+                    {{ col }}
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr ng-repeat="row in rows">
+                  <td ng-click="clickRow($index)">{{ $index + 1}}</td>
+                  <td ng-repeat="data in row">
+                    <input type="text" value="{{ data | convnull | datefmt }}" readonly="true" on-click-row />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+</div>
+
