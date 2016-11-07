@@ -1,0 +1,64 @@
+<ng-include src="'views/left.html'"></ng-include>
+
+<div class="right_col" ng-init="init()">
+  
+  <div>
+
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Settings</h3>
+    </div>
+    
+  </div>
+  <div class="clearfix"></div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_content">
+
+          <!-- -->
+          <form class="form-horizontal form-label-left">
+            <div ng-repeat="(itemName, setting) in settings">
+            <h2>{{ itemName }}</h2>
+            <div ng-repeat="(key, detail) in setting" class="form-group">
+              <label for="input-{{key}}" class="control-label col-md-3 col-sm-3 col-xs-12">{{detail.label}}</label>
+
+              <div ng-switch="detail.input_type">
+                <div ng-switch-when="text" class="col-md-9 col-sm-9 col-xs-12">
+                  <input class="form-control" type="text" id="input-{{key}}" ng-model="userInput[key]" ng-init="userInput[key]=detail.default" ng-disabled="detail.disable"/>
+                </div>
+                <div ng-switch-when="password" class="col-md-9 col-sm-9 col-xs-12">
+                  <input class="form-control" type="password" id="input-{{key}}" ng-model="userInput[key]" ng-init="userInput[key]=detail.default"/>
+                </div>
+                <div ng-switch-when="number" class="col-md-9 col-sm-9 col-xs-12">
+                  <input class="form-control" type="number" id="input-{{key}}" ng-model="userInput[key]" ng-init="userInput[key]=detail.default"/>
+                </div>
+                <div ng-switch-when="file" class="col-md-9 col-sm-9 col-xs-12">
+                  <input class="form-control" type="file" id="input-{{key}}" ng-model="userInput[key]" />
+                </div>
+                <div ng-switch-when="select" class="col-md-9 col-sm-9 col-xs-12">
+                  <select class="form-control" ng-model="userInput[key]" ng-options="data.value as data.label for data in detail.datas" ng-init="userInput[key]=detail.selected">
+                  </select>
+                </div>
+              </div>
+            </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                <button type="button" ng-click="onBack()" class="btn">cancel</button>
+                <button type="button" ng-click="onSave()" class="btn btn-primary">save</button>
+              </div>
+            </div>
+          </form>
+          <!-- -->
+
+          <!-- -->
+
+        </div><!-- x_content -->
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+

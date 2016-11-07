@@ -25,12 +25,26 @@
                 <i class="fa fa-pause"></i>
               </a>
 
-              <select ng-model="seletedLimit" ng-options="limit.value as limit.label for limit in limiters">
-              </select>
-
+              <div class="btn-group mrg-left-10">
+                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                  {{ seletedLimit.label }}
+                  <span class="caret"></span>
+                </button>
+                <ul role="menu" class="dropdown-menu">
+                  <li ng-repeat="limit in limiters">
+                    <a ng-click="selectedLimit(limit.value)">{{ limit.label }}</a>
+                  </li>
+                </ul>
+              </div>
+              <!--
               <a class="btn btn-app btn-xs" ng-click="goto('graphical')">
                 <i class="fa fa-pie-chart"></i>
               </a>
+
+              <a class="btn btn-app btn-xs" ng-click="starMode=!starMode">
+                <i ng-class="{'fa fa-star': starMode, 'fa fa-star-o': !starMode}"></i>
+              </a>
+              -->
             </div>
 
             <div ui-ace="{
@@ -39,7 +53,64 @@
               mode: 'sql',
               onLoad: aceLoaded,
               require: ['ace/ext/language_tools']
-            }" style="height: 200px"></div>
+            }" style="height: 200px" ng-if="!starMode"></div>
+
+            <!-- star mode-->
+            <div ng-if="starMode">
+              <form>
+                <div class="form-group">
+                  
+                  <label for="" class="control-label col-md-3 col-sm-3 col-xs-12">action</label>
+                  <div class="col-md-9 col-sm-9 col-xs-12">
+                    <select class="form-control" ng-model="star['action']" ng-init="star['action']=1" >
+                      <option value="1">select</option>
+                    </select>
+                  </div>
+
+                  <label for="" class="control-label col-md-3 col-sm-3 col-xs-12">columns</label>
+                  <div class="col-md-9 col-sm-9 col-xs-12">
+                    <select class="form-control" ng-model="star['columns']" ng-init="star['columns']=1">
+                      <option value="1">all</option>
+                    </select>
+                  </div>
+
+                  <label for="" class="control-label col-md-3 col-sm-3 col-xs-12">table</label>
+                  <div class="col-md-9 col-sm-9 col-xs-12">
+                    <select class="form-control" ng-model="star['table']" ng-options="table for table in tables">
+                    </select>
+                  </div>
+
+                  <label for="" class="control-label col-md-3 col-sm-3 col-xs-12">where</label>
+                  <div class="col-md-9 col-sm-9 col-xs-12">
+                    <button type="button" class="btn btn-default" ng-click="toggleWhereModal()">
+                      <i class="fa fa-plus"></i>
+                    </button>
+
+                    <!--<button type="button" class="btn btn-default" data-toggle="modal" data-target="#star-where">
+                      <i class="fa fa-plus"></i>
+                    </button>-->
+                    <!--<select class="form-control" ng-model="star['where']" ng-options="table for table in tables">
+                    </select>-->
+                  </div>
+
+                  <label for="" class="control-label col-md-3 col-sm-3 col-xs-12">limit</label>
+                  <div class="col-md-9 col-sm-9 col-xs-12">
+                    <input class="form-control" type="text" ng-model="star['limit']"/>
+                  </div>
+
+                </div>
+              </form>
+              <div>
+                <p>{{ star_set_query }}</p>
+              </div>
+
+              <div class="form-group">
+              <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                <button type="button" ng-click="star_exec()" class="btn btn-primary">ok</button>
+              </div>
+            </div>
+
+            </div>
           </div>
 
         </div><!-- x_content -->
@@ -79,17 +150,18 @@
       <div class="x_panel">
         <div class="x_content">
           
-          <div class="table-responsive max_height_700" scroll-e>
-            <table class="">
+          <div class="table-responsive max_height_700">
+            <!--<button ng-click="loadPrevPage()">前の{{ SPLIT_THRESHOLD }}へ</button>-->
+            <table class="table-bordered">
               <thead>
                 <tr class="headings">
-                  <th>#</th>
-                  <th ng-repeat="col in columns" class="column-title" ng-click="sort(col)">
-                    {{ col }}
+                  <th class="column-index">#</th>
+                  <th ng-repeat="col in columns" class="column-title column" ng-click="sort(col)">
+                      {{ col }}
                   </th>
                 </tr>
               </thead>
-
+              <!--
               <tbody>
                 <tr ng-repeat="row in rows">
                   <td ng-click="clickRow($index)">{{ $index + 1}}</td>
@@ -98,9 +170,20 @@
                   </td>
                 </tr>
               </tbody>
+              -->
+
+              <tbody>
+                <tr ng-repeat="row in rows">
+                  <td ng-click="clickRow($index)" class="column-index">{{ $index + 1}}</td>
+                  <td ng-repeat="data in row" class="column" on-click-row>
+                      {{ data | convnull | datefmt }}
+                      <!--<input type="text" value="{{ data | convnull | datefmt }}" ng-if="!!editables[$index]"/>-->
+                  </td>
+                </tr>
+              </tbody>
             </table>
+            <!--<button ng-click="loadNextPage()">次の{{ SPLIT_THRESHOLD }}へ</button>-->
             <scroll-drt></scroll-drt>
-            <!--<table id="sheet"></table>-->
           </div>
 
         </div>
@@ -134,60 +217,11 @@
   </div>
   <!-- info end -->
   
+  <modal-star-where sid="star-where" datas="{{ whereDatas }}" title="where" datakey="whereDatas" callback="modalChecked"></modal-star-where>
+
   <modal-checker-small sid="columns-checker" datas="{{ columns }}" title="columns" datakey="columns" callback="modalChecked"></modal-checker-small>
 
-  <!--  
-  <div class="modal fade bs-example-modal-sm in" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
-          </button>
-          <h4 class="modal-title" id="myModalLabel2">Modal title</h4>
-        </div>
-        <div class="modal-body">
-          <h4>Text in a modal</h4>
-          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-          <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-
-      </div>
-    </div>
   </div>
-  -->
-
-  </div>
-  
-  <!-- info -->
-  <!--
-  <div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-      <div class="x_panel">
-        <div class="x_title">
-          <h2>Info</h2>
-          <ul class="nav navbar-right panel_toolbox">
-            <li>
-              <a class="collapse-link" ng-click="viewCnt = !viewCnt">
-                <i ng-class="{'fa fa-chevron-up': viewCnt, 'fa fa-chevron-down': !viewCnt}"></i>
-              </a>
-            </li>
-          </ul>
-          <div class="clearfix"></div>
-        </div>
-        <div class="x_content">
-          <a class="btn btn-app btn-xs" ng-click="downloadCsv()" ng-if="exec_query">
-            <i class="fa fa-download"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-  -->
 
 </div>
 

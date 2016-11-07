@@ -1,6 +1,6 @@
 'use strict';
-APP.controller('ProcesslistCtrl', ['$scope', 'mysql', 'session', 'loading', 
-  function($scope, mysql, session, loadingbar){
+APP.controller('ProcesslistCtrl', ['$scope', 'mysql', 'session', 'loading', '$rootScope', 
+  function($scope, mysql, session, loadingbar, $rootScope){
     $scope.btnActive = false;
 
     const loading = loadingbar.getInstance('#circle-lodaer');
@@ -19,6 +19,10 @@ APP.controller('ProcesslistCtrl', ['$scope', 'mysql', 'session', 'loading',
         clearLoop();
       }
     };
+    
+    $rootScope.$on('$locationChangeStart', (ev, next, cur) => {
+      clearLoop();
+    });
 
     const setLoop = function() {
       $scope.btnActive = true;

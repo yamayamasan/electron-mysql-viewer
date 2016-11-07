@@ -14,6 +14,10 @@ APP.controller('ConnectionsCtrl', ['$scope', '$location', 'mysql', 'localDB', 's
       });
     };
 
+    $scope.edit = function(connectionId) {
+      $location.path(`/connections/add/${connectionId}`);
+    };
+
     $scope.connect = function(values){
       co(function *(){
         progressbar.start();

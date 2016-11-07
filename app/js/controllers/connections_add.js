@@ -1,20 +1,31 @@
 'use strict';
 
-APP.controller('ConnectionsAddCtrl', ['$scope', '$location','mysql','localDB', 'notification',
-  function($scope, $location,mysql, localDB, notification){
+APP.controller('ConnectionsAddCtrl', ['$scope', '$location','mysql','localDB', 'notification', '$routeParams', 
+  function($scope, $location,mysql, localDB, notification, $routeParams){
     const columns = require(`${APP_CONFIG_PATH}/input_fields.json`).connections;
 
+    const id = $routeParams.id || null;
+    $scope.isNew = true;
     $scope.userInput = {
       mysqlDatabase: null
     };
-    
-    $scope.databases = {};
+
+    $scope.databases = null;
     $scope.init = function() {
       $scope.columns = columns;
+      if (!_.isNull(id)) {
+        co(function *() {
+          const _data = yield localDB.getById('connections', id);
+          $scope.$apply(() => {
+            $scope.userInput = _data;
+            $scope.isNew = false;
+          });
+        });
+      }
     };
 
     $scope.onConnect = function() {
-      getDatabases($scope.userInput);
+      getDatabases(allowParams());
     };
 
     $scope.onBack = function() {
@@ -23,11 +34,20 @@ APP.controller('ConnectionsAddCtrl', ['$scope', '$location','mysql','localDB', '
 
     $scope.selectDb = function(db) {
       $scope.userInput.mysqlDatabase = db;
-      console.log(db);
     };
 
     $scope.onSave = function() {
-      localDB.insert('connections', $scope.userInput);
+      localDB.insert('connections', allowParams());
+      $scope.onBack();
+    };
+
+    $scope.onUpdate = function() {
+      localDB.update('connections', id, allowParams());
+      $scope.onBack();
+    };
+
+    $scope.onRemove = function() {
+      localDB.delete('connections', id);
       $scope.onBack();
     };
 
@@ -39,6 +59,17 @@ APP.controller('ConnectionsAddCtrl', ['$scope', '$location','mysql','localDB', '
       if ((_.isUndefined(col.type)) || ($scope.userInput.type === col.type)) return true;
 
       return false;
+    };
+
+    const allowParams = function() {
+      const params = {};
+      _.forEach($scope.userInput, (val, key) => {
+        if (!_.isUndefined(columns[key]) && (_.isUndefined(columns[key].type) || 
+            columns[key].type === $scope.userInput.type)) {
+          params[key] = val;
+        }
+      });
+      return params;
     };
 
     const getDatabases = function(input) {
