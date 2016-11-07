@@ -17,6 +17,15 @@ APP.service('session', [function(){
     },
     getConnection: function() {
       return openConnection;
+    },
+    clearConnection: function() {
+      openConnection = null;
+    },
+    hasConnection: function() {
+      if (_.isNull(openConnection)) {
+        return false;
+      }
+      return true;
     }
   };
 }]);

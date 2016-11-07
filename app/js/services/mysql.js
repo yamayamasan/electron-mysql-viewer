@@ -45,7 +45,15 @@ APP.service('mysql', ['session', function(session){
   };
 
   return {
+    preConnection: function() {
+      if (session.hasConnection()) {
+        const connection = session.getConnection();
+        this.closeConnection(connection);
+        session.clearConnection();
+      }
+    },
     getConnection: function(info) {
+      this.preConnection();
       const config = setConfig(info, true);
       if (info.type === 1) {
         return new Promise((resolve, reject) => {
@@ -105,6 +113,15 @@ APP.service('mysql', ['session', function(session){
       return new Promise((resolve, reject) => {
         if (!connection) reject();
         connection.query('SHOW TABLES', (err, rows) => {
+          if (err) reject(err);
+          resolve(rows);
+        });
+      });
+    },
+    descTable: function(connection, table) {
+      return new Promise((resolve, reject) => {
+        if (!connection) reject();
+        connection.query(`DESC ${table}`, (err, rows) => {
           if (err) reject(err);
           resolve(rows);
         });

@@ -61,5 +61,19 @@
         "input_type": "text",
         "hide": true
       }
+  },
+  "settings": {
+    "connections": {
+      "timeout": {
+        "label": "time out(second)",
+        "input_type": "number"
+      }
+    },
+    "processlist": {
+      "auto_refresh_time": {
+        "label": "auto refresh time(second)",
+        "input_type": "number"
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 const co = require('co');
 const _ = require('lodash');
 const moment = require('moment');
+const fs = require('fs');
 const APP = angular.module('app', ['ngRoute', 'ui.ace', 'ngProgress' ]);
 const APP_PATH  = __dirname;
 const APP_CONFIG_PATH  = `${APP_PATH}/config`;
@@ -36,6 +37,9 @@ APP.config(function($routeProvider, $locationProvider) {
   }).when('/connections/add', {
     templateUrl: 'views/connections_add.html',
     controller: 'ConnectionsAddCtrl'
+  }).when('/connections/add/:id', {
+    templateUrl: 'views/connections_add.html',
+    controller: 'ConnectionsAddCtrl'
   }).when('/operation/:id', {
     templateUrl: 'views/operation.html',
     controller: 'OperationCtrl'
@@ -45,6 +49,9 @@ APP.config(function($routeProvider, $locationProvider) {
   }).when('/processlist', {
     templateUrl: 'views/processlist.html',
     controller: 'ProcesslistCtrl'
+  }).when('/settings', {
+    templateUrl: 'views/settings.html',
+    controller: 'SettingsCtrl'
   })
   .otherwise({
     redirectTo: '/'

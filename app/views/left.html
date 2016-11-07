@@ -1,7 +1,7 @@
 <div id="left_side" class="col-md-3 left_col menu_fixed" ng-controller="LeftSideCtrl" ng-init="init()">
   <div class="left_col scroll-view">
     <div class="navbar nav_title">
-      <a href="#" class="site_title">
+      <a ng-href="#/connections" class="site_title">
         <i class="fa fa-paw"></i><span>Mysql</span>
       </a>
     </div>
@@ -48,9 +48,9 @@
       </div>
 
       <ul class="nav navbar-nav navbar-right">
-        <li role="presentation" class="dropdown">
-          <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
-            <i class="fa fa-envelope-o"></i>
+        <li>
+          <a ng-href="#/settings">
+            <i class="fa fa-gear"></i>
             <!--<span class="badge bg-green">6</span>-->
           </a>
         </li>

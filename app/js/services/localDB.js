@@ -32,8 +32,15 @@ APP.service('localDB', function(){
         });
       });
     },
-    getById: function(tblname) {
-
+    getById: function(tblname, val) {
+      return new Promise ((resolve, reject) => {
+        // db[tblname].where('id').equals(parseInt(val)).toArray().then((r) => {
+        //   resolve(r);
+        // });
+        db[tblname].where('id').equals(Number(val)).first().then((r) => {
+          resolve(r);
+        });
+      });
     },
     getByKey: function(tblname, key, val) {
       return new Promise ((resolve, reject) => {
@@ -50,6 +57,10 @@ APP.service('localDB', function(){
       const id = parseInt(_id);
       values.updated_at = getNow();
       db[tblname].update(id, values);
+    },
+    delete: function(tblname, _id) {
+      const id = parseInt(_id);
+      db[tblname].delete(id);
     }
   };
 });
