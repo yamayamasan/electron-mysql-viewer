@@ -9,6 +9,12 @@
   display: block;
 }
 
+.ace_editor {
+  height: 200px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+}
+
 #loader {
   position: absolute;
   width: 30px; /*ローディングアイコンの横サイズ*/
@@ -115,4 +121,39 @@
 
 .max_height_700 {
   max-height: 700px;
+}
+
+.mrg-left-10 {
+  margin-left: 10px !important;
+}
+
+.txt-center {
+  text-align: center;
+}
+
+.ver-center {
+  vertical-align: middle;
+}
+
+.ver-center-imp {
+  vertical-align: middle !important;
+}
+
+th.column {
+  white-space: nowrap;
+  padding: 2px 3px;
+}
+
+td.column {
+  white-space: nowrap;
+  padding: 2px 3px;
+  min-width: 50px;
+}
+
+th.column-index, td.column-index {
+  background-color: #DDD;
+}
+
+.row-separate {
+  border-collapse: separate;
 }

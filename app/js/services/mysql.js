@@ -3,6 +3,15 @@
 const mysql = require('mysql');
 const tunnel = require('tunnel-ssh').tunnel;
 
+const catchUncaughtException = function(reject) {
+  process.on('uncaughtException', function(e){
+    if (e && e.code === "EADDRINUSE") {
+      console.error(e.message);
+      reject(e);
+    }
+  });
+};
+
 APP.service('mysql', ['session', function(session){
   let timers = [];
 
@@ -45,7 +54,15 @@ APP.service('mysql', ['session', function(session){
   };
 
   return {
+    preConnection: function() {
+      if (session.hasConnection()) {
+        const connection = session.getConnection();
+        this.closeConnection(connection);
+        session.clearConnection();
+      }
+    },
     getConnection: function(info) {
+      this.preConnection();
       const config = setConfig(info, true);
       if (info.type === 1) {
         return new Promise((resolve, reject) => {
@@ -57,6 +74,7 @@ APP.service('mysql', ['session', function(session){
     },
     getConnectionOverSsh: function(config) {
       return new Promise((resolve, reject) => {
+        catchUncaughtException(reject);
         timers.push(setTimeout(() => {
           reject({msg: 'Connection Timeout'});
         }, 6000));
@@ -105,6 +123,15 @@ APP.service('mysql', ['session', function(session){
       return new Promise((resolve, reject) => {
         if (!connection) reject();
         connection.query('SHOW TABLES', (err, rows) => {
+          if (err) reject(err);
+          resolve(rows);
+        });
+      });
+    },
+    descTable: function(connection, table) {
+      return new Promise((resolve, reject) => {
+        if (!connection) reject();
+        connection.query(`DESC ${table}`, (err, rows) => {
           if (err) reject(err);
           resolve(rows);
         });

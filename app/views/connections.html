@@ -26,18 +26,27 @@
             <table class="table table-striped jambo_table bulk_action">
               <thead>
                 <tr class="headings">
-                  <th class="column-title">id</th>
-                  <th class="column-title">name</th>
-                  <th class="column-title">host</th>
-                  <th class="column-title">database</th>
+                  <th class="column-title txt-center ver-center-imp">id</th>
+                  <th class="column-title txt-center ver-center-imp">name</th>
+                  <th class="column-title txt-center ver-center-imp">host</th>
+                  <th class="column-title txt-center ver-center-imp">database</th>
+                  <th class="column-title txt-center ver-center-imp">action</th>
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="connection in connections" ng-click="connect(connection)">
-                  <td>{{ connection.id }}</td>
-                  <td>{{ connection.name }}</td>
-                  <td>{{ connection.sshHost }}</td>
-                  <td>{{ connection.mysqlDatabase }}</td>
+                <tr ng-repeat="connection in connections">
+                  <td class="txt-center ver-center-imp" ng-click="connect(connection)">{{ connection.id }}</td>
+                  <td class="txt-center ver-center-imp" ng-click="connect(connection)">{{ connection.name }}</td>
+                  <td class="txt-center ver-center-imp" ng-click="connect(connection)">{{ connection.sshHost }}</td>
+                  <td class="txt-center ver-center-imp" ng-click="connect(connection)">{{ connection.mysqlDatabase }}</td>
+                  <td class="txt-center ver-center-imp">
+                    <a class="btn btn-app btn-xxs" ng-click="edit(connection.id)">
+                      <i class="fa fa-filter"></i>
+                    </a>
+                    <!--<a class="btn btn-app btn-xxs" >
+                      <i class="fa fa-filter"></i>
+                    </a>-->
+                  </td>
                 </tr>
               </tbody>
             </table>

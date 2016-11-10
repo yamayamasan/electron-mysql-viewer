@@ -1,6 +1,5 @@
 'use strict';
 
-var fs = require('fs');
 const remote = require('electron').remote;
 const dialog = remote.dialog;
 

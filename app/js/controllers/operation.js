@@ -1,6 +1,9 @@
 'use strict';
 APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notification', 'loading','localDB', 'export', 'shortcut', 'editor',
   function($scope, mysql, share, session, notification, loading, localDB, exportFile, shortcut, editor){
+    const SPLIT_THRESHOLD = 300;
+    const loadingbar = loading.getInstance('#circle-lodaer');
+
     let connection = null;
     let connection_id = null;
     let localData = null;
@@ -8,6 +11,22 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
     let loop = null;
     let masterRowDatas = null;
     let sortState ={};
+    let tables = null;
+
+    const viewHight = 50;
+    const displayRowNum = 40;
+    
+    $scope.scrollMax = 0;
+    $scope.scroll = 0;
+
+    // star mode
+    $scope.star = {};
+    $scope.star_set_query = null;
+    $scope.starMode = false;
+    
+    // test
+    $scope.editables = [];
+    $scope.SPLIT_THRESHOLD = SPLIT_THRESHOLD;
 
     $scope.connectionName = null;
     $scope.rows = null;
@@ -15,7 +34,10 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
     $scope.localQueryTime = null;
     $scope.total_query_count = null;
     $scope.exec_query = null;
-    $scope.seletedLimit = 10000;
+    $scope.seletedLimit = {
+      label: 'limit 10000',
+      value: 10000
+    };
     $scope.limiters = [
       {label: 'limit 100', value: 100},
       {label: 'limit 500', value: 500},
@@ -24,9 +46,6 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       {label: 'limit 10000', value: 10000},
       {label: 'limit 50000', value: 50000}
     ];
-
-    const SPLIT_THRESHOLD = 300;
-    const loadingbar = loading.getInstance('#circle-lodaer');
 
     $scope.init = function() {
       connection = session.getConnection();
@@ -37,7 +56,8 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       notification.success('Successed Connect');
       
       mysql.getTables(connection).then((rows) => {
-        share.set('tables', rows);
+        tables = rows;
+        share.set('tables', tables);
       });
 
       shortcut.initialize('sample');
@@ -77,10 +97,6 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       return page.call(fnc);
     };
 
-    $scope.$watch('rows', () => {
-      page.loadingEnd();
-    });
-
     // view actions
     $scope.downloadCsv = function() {
       if (!masterRowDatas) {
@@ -104,27 +120,131 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       }
     };
 
+    $scope.toggleWhereModal = function() {
+      if (!$scope.star.table) {
+        notification.error('select table');
+        return;
+      }
+      co(function *() {
+        const table = yield mysql.descTable(connection, $scope.star.table);
+        $scope.$apply(() => {
+          $scope.whereDatas = table;
+          $('#star-where').modal('show');
+        });
+      });
+    };
+
+    $scope.selectedLimit = function(val) {
+      $scope.limiters.forEach((limit) => {
+        if (limit.value === val) {
+          $scope.seletedLimit = limit;   
+        }
+      });
+    };
+
+    $scope.loadNextPage = function() {
+      loadPage();
+    };
+
+    // $scope.seletedLimit = {
+    //   label: 'limit 10000',
+    //   value: 10000
+    // };
+    // $scope.limiters = [
+    //   {label: 'limit 100', value: 100},
+    //   {label: 'limit 500', value: 500},
+    //   {label: 'limit 1000', value: 1000},
+    //   {label: 'limit 5000', value: 5000},
+    //   {label: 'limit 10000', value: 10000},
+    //   {label: 'limit 50000', value: 50000}
+    // ];
+    // watcher
+    $scope.$watch('rows', () => {
+      page.loadingEnd();
+    });
+
+    $scope.$watch('starMode', (_star) => {
+      $scope.star_set_query = null;
+      if (_star) {
+        $scope.tables = _.map(tables, (v) => {
+          return _.values(v)[0];
+        });
+      }
+    });
+
+    // let _query_text = '{action} {columns} FROM {table} {where} {limit}';
+    const _query_text = '{action} {columns} FROM {table} {limit}';
+    const starOptions = {
+      action: {
+        1: 'select'
+      },
+      columns: {
+        1: '*'
+      }
+    };
+
+    $scope.$watch('star', (newData) => {
+      // let c_query_text = _.clone(_query_text);
+      let c_query_text = _query_text;
+      const _datas = _.clone(newData);
+      _.map(_datas, (data, idx) => {
+        switch(idx) {
+          case 'action':
+          case 'columns':{
+            _datas[idx] = starOptions[idx][data];
+            break;
+          }
+          case 'limit':{
+            _datas[idx] = `limit ${data}`;
+            break;
+          }
+        }
+        const reg = new RegExp(`{${idx}}`);
+        if (reg.test(c_query_text)) {
+          c_query_text = _.replace(c_query_text, `{${idx}}`, _datas[idx]);
+        }
+
+      });
+      $scope.star_set_query = c_query_text;
+    }, true);
+
     share.watch('query_table', (table) => {
       if (_.isEmpty(table)) return;
       const select_query = `SELECT * FROM ${table};`;
       editor.insertLastRow(select_query);
     });
+    
+    $scope.loadPage = function(scroll) {
+      $scope.scroll = scroll;
+      assignViewData({
+        rows: currentRows(masterRowDatas)
+      });
+    };
+
+    $scope.getIndex = function(hashkey)
+    {
+      const index = _.indexOf(masterRowDatas, _.find(masterRowDatas, {'$$hashKey': hashkey}));
+      return index + 1;
+    };
 
     const exec = function() {
       load.start();
       let text = getQueryText();
 
-      text = mysql.addLimiter(text, $scope.seletedLimit);
+      text = mysql.addLimiter(text, $scope.seletedLimit.value);
       co(function *() {
+        $scope.rows = null;
+        $scope.exec_query = null;
         const r = yield mysql.getQuery(connection, text);
-        const rows = r.rows;
-        const columns = getColumns(r.fields);
-        masterRowDatas = rows;
+
+        masterRowDatas = r.rows;
 
         const splitRows = currentRows(masterRowDatas, 'next');
+        $scope.scrollMax = (masterRowDatas.length - displayRowNum) * viewHight;
+        $scope.scroll = 0;
         assignViewData({
           rows: splitRows,
-          columns: columns,
+          columns: getColumns(r.fields),
           localQueryTime: r.localtime,
           total_query_count: masterRowDatas.length,
           exec_query: text
@@ -198,20 +318,16 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       });
       return keys;
     };
-
-    const currentRows = function(rows, func) {
-      let _rows = rows;
-      if (rows.length > SPLIT_THRESHOLD) {
-        const start = page.current() * SPLIT_THRESHOLD;
-        const end = page[func]() * SPLIT_THRESHOLD;
-        _rows = _.slice(rows, start, end);
-        page.increment();
-      }
-      return _rows;
+    
+    const currentRows = function(rows) {
+      const startIndex = parseInt($scope.scroll / viewHight, 10);
+      console.log(_.slice(rows, startIndex, startIndex+displayRowNum));
+      return _.slice(rows, startIndex, startIndex+displayRowNum);
     };
 
     const getQueryText = function(query) {
       if (query) return query;
+      // if ($scope.star_set_query) return $scope.star_set_query;
 
       let text = editor.getCopyText();
       if (_.isEmpty(text)) {
@@ -239,6 +355,11 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
     if ($scope.total_query_count < SPLIT_THRESHOLD) return;
     const splitRows = currentRows(masterRowDatas, 'next');
     if (splitRows.length <= 0) return;
+    _.map($scope.rows, (row) => {
+      row.extend_info = {
+        view: false
+      };
+    });
     assignViewData({
       rows: _.concat($scope.rows, splitRows)
     });
@@ -258,11 +379,13 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
   };
 
   const assignViewData = function(datas) {
-    $scope.$apply(() => {
-      _.forEach(datas, (data, key) => {
-        $scope[key] = data;
-      });
+    _.forEach(datas, (data, key) => {
+      $scope[key] = data;
     });
+    try {
+      $scope.$apply();
+    } catch(e) {
+      console.error(e);
+    }
   };
-
 }]);
