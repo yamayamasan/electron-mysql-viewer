@@ -153,3 +153,7 @@ td.column {
 th.column-index, td.column-index {
   background-color: #DDD;
 }
+
+.row-separate {
+  border-collapse: separate;
+}

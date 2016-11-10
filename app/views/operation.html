@@ -150,9 +150,8 @@
       <div class="x_panel">
         <div class="x_content">
           
-          <div class="table-responsive max_height_700">
-            <!--<button ng-click="loadPrevPage()">前の{{ SPLIT_THRESHOLD }}へ</button>-->
-            <table class="table-bordered">
+          <div class="table-responsive max_height_700" scroll-e>
+            <table class="table-bordered row-separate" ng-style="{'padding-top': scroll + 'px', 'padding-bottom': (scrollMax - scroll) + 'px'}">
               <thead>
                 <tr class="headings">
                   <th class="column-index">#</th>
@@ -161,29 +160,15 @@
                   </th>
                 </tr>
               </thead>
-              <!--
               <tbody>
-                <tr ng-repeat="row in rows">
-                  <td ng-click="clickRow($index)">{{ $index + 1}}</td>
-                  <td ng-repeat="data in row" >
-                    <input type="text" value="{{ data | convnull | datefmt }}" readonly="true" on-click-row />
-                  </td>
-                </tr>
-              </tbody>
-              -->
-
-              <tbody>
-                <tr ng-repeat="row in rows">
-                  <td ng-click="clickRow($index)" class="column-index">{{ $index + 1}}</td>
+                <tr ng-repeat="row in rows track by $id(row)">
+                  <td ng-click="clickRow($index)" class="column-index">{{ getIndex(row.$$hashKey) }}</td>
                   <td ng-repeat="data in row" class="column" on-click-row>
                       {{ data | convnull | datefmt }}
-                      <!--<input type="text" value="{{ data | convnull | datefmt }}" ng-if="!!editables[$index]"/>-->
                   </td>
                 </tr>
               </tbody>
             </table>
-            <!--<button ng-click="loadNextPage()">次の{{ SPLIT_THRESHOLD }}へ</button>-->
-            <scroll-drt></scroll-drt>
           </div>
 
         </div>

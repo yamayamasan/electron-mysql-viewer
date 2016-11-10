@@ -13,6 +13,12 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
     let sortState ={};
     let tables = null;
 
+    const viewHight = 50;
+    const displayRowNum = 40;
+    
+    $scope.scrollMax = 0;
+    $scope.scroll = 0;
+
     // star mode
     $scope.star = {};
     $scope.star_set_query = null;
@@ -40,7 +46,6 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       {label: 'limit 10000', value: 10000},
       {label: 'limit 50000', value: 50000}
     ];
-
 
     $scope.init = function() {
       connection = session.getConnection();
@@ -208,6 +213,19 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       const select_query = `SELECT * FROM ${table};`;
       editor.insertLastRow(select_query);
     });
+    
+    $scope.loadPage = function(scroll) {
+      $scope.scroll = scroll;
+      assignViewData({
+        rows: currentRows(masterRowDatas)
+      });
+    };
+
+    $scope.getIndex = function(hashkey)
+    {
+      const index = _.indexOf(masterRowDatas, _.find(masterRowDatas, {'$$hashKey': hashkey}));
+      return index + 1;
+    };
 
     const exec = function() {
       load.start();
@@ -215,12 +233,15 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
 
       text = mysql.addLimiter(text, $scope.seletedLimit.value);
       co(function *() {
+        $scope.rows = null;
+        $scope.exec_query = null;
         const r = yield mysql.getQuery(connection, text);
-        // const rows = r.rows;
-        // const columns = getColumns(r.fields);
+
         masterRowDatas = r.rows;
 
         const splitRows = currentRows(masterRowDatas, 'next');
+        $scope.scrollMax = (masterRowDatas.length - displayRowNum) * viewHight;
+        $scope.scroll = 0;
         assignViewData({
           rows: splitRows,
           columns: getColumns(r.fields),
@@ -297,27 +318,11 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       });
       return keys;
     };
-
-    const currentRows = function(rows, func) {
-      let _rows = rows;
-      if (rows.length > SPLIT_THRESHOLD) {
-        const start = page.current() * SPLIT_THRESHOLD;
-        const end = page[func]() * SPLIT_THRESHOLD;
-        _rows = _.slice(rows, start, end);
-        page.increment();
-      }
-      return _rows;
-    };
-
-    const __currentRows = function(rows, func) {
-      let _rows = rows;
-      if (rows.length > SPLIT_THRESHOLD) {
-        const start = page.current() * SPLIT_THRESHOLD;
-        const end = page[func]() * SPLIT_THRESHOLD;
-        _rows = _.slice(rows, start, end);
-        page.increment();
-      }
-      return _rows;
+    
+    const currentRows = function(rows) {
+      const startIndex = parseInt($scope.scroll / viewHight, 10);
+      console.log(_.slice(rows, startIndex, startIndex+displayRowNum));
+      return _.slice(rows, startIndex, startIndex+displayRowNum);
     };
 
     const getQueryText = function(query) {
@@ -383,22 +388,4 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       console.error(e);
     }
   };
-
-  /*
-  const assignViewData = function(datas) {
-    try {
-      $scope.$apply(() => {
-        _.forEach(datas, (data, key) => {
-          $scope[key] = data;
-        });
-      });
-    } catch(e) {
-      console.error(e);
-      _.forEach(datas, (data, key) => {
-          $scope[key] = data;
-      });
-    }
-  };
-  */
-
 }]);

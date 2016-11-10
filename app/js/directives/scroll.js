@@ -251,21 +251,7 @@ APP.directive('scrollE', [function(){
     link: function postLink(scope, element, attrs){
       const ele = element[0];
       ele.addEventListener('scroll', () => {
-        const scrollTotal = ele.scrollHeight - ele.clientHeight;
-        const diff = scrollTotal - ele.scrollTop;
-        if (diff < (scrollTotal / 10)) {
-          /*
-          if (!scope.isLoadingPage()) {
-            scope.beginLoadPage();
-            scope.loadPage();
-          }
-          */
-          if (!scope.page('isLoading')) {
-            scope.page('LoadBegin');
-            scope.page('load');
-            // scope.loadPage();
-          }
-        }
+        scope.loadPage(ele.scrollTop);
       });
     }
   };

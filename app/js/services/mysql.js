@@ -3,6 +3,15 @@
 const mysql = require('mysql');
 const tunnel = require('tunnel-ssh').tunnel;
 
+const catchUncaughtException = function(reject) {
+  process.on('uncaughtException', function(e){
+    if (e && e.code === "EADDRINUSE") {
+      console.error(e.message);
+      reject(e);
+    }
+  });
+};
+
 APP.service('mysql', ['session', function(session){
   let timers = [];
 
@@ -65,6 +74,7 @@ APP.service('mysql', ['session', function(session){
     },
     getConnectionOverSsh: function(config) {
       return new Promise((resolve, reject) => {
+        catchUncaughtException(reject);
         timers.push(setTimeout(() => {
           reject({msg: 'Connection Timeout'});
         }, 6000));
