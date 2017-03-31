@@ -1,26 +1,13 @@
 {
-  "name": "viewmysql",
-  "version": "0.0.1",
-  "description": "",
+  "name": "electron-mysql-viewer-riot",
+  "version": "1.0.0",
   "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "angular-new-router": "^0.5.3",
-    "co": "^4.6.0",
-    "dexie": "^1.4.2",
-    "lodash": "^4.16.4",
-    "moment": "^2.15.1",
-    "mysql": "^2.11.1",
-    "paralleljs": "^0.2.1",
+    "dexie": "^1.5.1",
+    "lodash": "^4.17.4",
+    "mysql": "^2.13.0",
+    "riot": "^3.4.0",
     "tunnel-ssh": "3.2.1-beta"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-uglify": "^2.0.0"
   }
 }

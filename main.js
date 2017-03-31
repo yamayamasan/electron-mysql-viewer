@@ -1,21 +1,36 @@
-'use strict';
+const { app, BrowserWindow, ipcMain } = require('electron');
+const url = require('url');
 
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const config = require('./config/app.json');
 
-let mainWindow = null;
+let win = null;
 
-app.on('window-all-closed', function() {
-  if (process.platform != 'darwin')
-    app.quit();
-});
+function createWindow() {
+  win = new BrowserWindow(config.main);
+  win.loadURL(url.format({
+    pathname: `${__dirname}/src/index.html`,
+    protocol: 'file:',
+    slashes: true,
+  }));
 
-app.on('ready', function() {
-  mainWindow = new BrowserWindow({width: 950, height: 600});
-  mainWindow.loadURL('file://' + __dirname + '/app/index.html');
-  mainWindow.on('closed', function() {
-    mainWindow = null;
+  win.on('closed', () => {
+    win = null;
   });
+}
+
+app.on('ready', createWindow);
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
+app.on('activate', () => {
+  if (win === null) {
+    createWindow();
+  }
+});
+
+const State = require('./libs/state');
+new State(ipcMain);
