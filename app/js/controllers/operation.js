@@ -86,7 +86,8 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
 
     $scope.sort = function(col) {
       setSortState(col);
-      const sortedRows = _.orderBy(masterRowDatas, col, sortState[col]);
+      // const sortedRows = _.orderBy(masterRowDatas, col, sortState[col]);
+      const sortedRows = _.sortBy(masterRowDatas, col, sortState[col]);
       page.reset();
       assignViewData({
         rows: currentRows(sortedRows, 'next')
@@ -231,7 +232,9 @@ APP.controller('OperationCtrl', ['$scope', 'mysql', 'share','session', 'notifica
       load.start();
       let text = getQueryText();
 
-      text = mysql.addLimiter(text, $scope.seletedLimit.value);
+      if (mysql.isSelectQuery(text)) {
+        text = mysql.addLimiter(text, $scope.seletedLimit.value);
+      }
       co(function *() {
         $scope.rows = null;
         $scope.exec_query = null;

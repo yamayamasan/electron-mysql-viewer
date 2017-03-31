@@ -4,7 +4,7 @@ const Dexie = require('dexie');
 APP.service('localDB', function(){
   let db = {};
   const schemas = require(`${APP_CONFIG_PATH}/indexdb_schema.json`);
-  
+
   const getNow = () => {
     return moment().format('YYYY-MM-DD HH:mm:ss');
   };

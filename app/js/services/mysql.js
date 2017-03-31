@@ -4,7 +4,7 @@ const mysql = require('mysql');
 const tunnel = require('tunnel-ssh').tunnel;
 
 const catchUncaughtException = function(reject) {
-  process.on('uncaughtException', function(e){
+  process.on('uncaughtException', (e) => {
     if (e && e.code === "EADDRINUSE") {
       console.error(e.message);
       reject(e);
@@ -50,6 +50,7 @@ APP.service('mysql', ['session', function(session){
       config.mysql.database = info.mysqlDatabase;
     }
 
+    console.log(config)
     return config;
   };
 
@@ -65,7 +66,7 @@ APP.service('mysql', ['session', function(session){
       this.preConnection();
       const config = setConfig(info, true);
       if (info.type === 1) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           resolve(this.getConnectionDirect(config));
         });
       } else if (info.type === 2) {
@@ -162,6 +163,11 @@ APP.service('mysql', ['session', function(session){
     },
     closeConnection: function(connection) {
       connection.end();
+    },
+    isSelectQuery: function(sql) {
+      const split = sql.split(' ');
+      if (split[0].toUpperCase() === 'SELECT') return true;
+      return false;
     },
     addLimiter: function(_sql, limit) {
       let sql = null;
