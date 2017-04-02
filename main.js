@@ -34,3 +34,7 @@ app.on('activate', () => {
 
 const State = require('./libs/state');
 new State(ipcMain);
+
+ipcMain.on('view:open:connection_edit', (ev, arg) => {
+  ev.sender.send('view:open:connection_edit', arg);
+});

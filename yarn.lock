@@ -6,6 +6,10 @@ abbrev@1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.0.tgz#d0554c2256636e2f56e7c2e5ad183f859428d81f"
 
+ace-min-noconflict@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/ace-min-noconflict/-/ace-min-noconflict-1.1.9.tgz#3449319be2a2902409d4159e640349ff9e9d3fe7"
+
 ajv@^4.9.1:
   version "4.11.5"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.11.5.tgz#b6ee74657b993a01dce44b7944d56f485828d5bd"

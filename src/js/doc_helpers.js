@@ -20,13 +20,13 @@ const $$texts = () => {
     const tgtId = label.getAttribute('for');
     const field = document.querySelector(`#${tgtId}`);
     if (field) {
-      if (field.value) label.classList.add('not-val-input');
+      if (field.value) label.classList.add('active');
       field.addEventListener('keydown', (e) => {
         setTimeout(() => {
           if (field.value != '') {
-            label.classList.add('not-val-input');
+            label.classList.add('active');
           } else {
-            label.classList.remove('not-val-input');
+            label.classList.remove('active');
           }
         }, 50);
       });
