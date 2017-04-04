@@ -8,39 +8,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- 後で差し替え -->
   <!-- Compiled and minified CSS -->
-  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">   
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css" />
   <link rel="stylesheet" href="./css/style.css" />
 
 </head>
 
 <body>
-    <app-header></app-header>
-  <div class="container">
-    <top></top>
-    <start></start>
-    <connection-edit></connection-edit>
-    <operation></operation>
-  </div>
+  <app-header></app-header>
+  <div class="container" id="container"></div>
+  <toast></toast>
 </body>
 
 <script src='../node_modules/riot/riot+compiler.min.js'></script>
+<!--<script src="https://unpkg.com/riot-router@0.9/dist/router.min.js"></script>-->
+<script src='../node_modules/riot-route/dist/route.min.js'></script>
 <script src='js/app.js'></script>
 <script src='js/doc_helpers.js'></script>
 <script src="./components/editor.tag" type="riot/tag"></script>
 <script src="./components/header.tag" type="riot/tag"></script>
+<script src="./components/toast.tag" type="riot/tag"></script>
 <script src="./pages/top.tag" type="riot/tag"></script>
 <script src="./pages/start.tag" type="riot/tag"></script>
 <script src="./pages/connection_edit.tag" type="riot/tag"></script>
 <script src="./pages/connections.tag" type="riot/tag"></script>
 <script src="./pages/operation.tag" type="riot/tag"></script>
+<script src='js/routing.js'></script>
 <script>
   riot.mount('app-header');
-  // riot.mount('top');
-  // riot.mount('start');
-  // riot.mount('connection-edit');
-
-  riot.mount('operation');
+  // riot.mount('toast');
 </script>
 
 </html>

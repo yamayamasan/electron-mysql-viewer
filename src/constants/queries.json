@@ -1,0 +1,6 @@
+{
+  "show_tables": "SHOW TABLES;",
+  "show_processlist": "SHOW PROCESSLIST;",
+  "show_databases": "SHOW DATABASES;",
+  "desc_table": "DESC %TABLE%;"
+}

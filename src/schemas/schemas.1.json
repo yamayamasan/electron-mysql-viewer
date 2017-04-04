@@ -1,0 +1,35 @@
+{
+  "schema": {
+    "version": 1,
+    "tables": [{
+      "table": "projects",
+      "columns": {
+        "id": "++",
+        "type": null,
+        "name": null,
+        "ssh.host": null,
+        "ssh.user": null,
+        "ssh.password": null,
+        "ssh.privatekey": null,
+        "ssh.disthost": null,
+        "mysql.host": null,
+        "mysql.port": null,
+        "mysql.user": null,
+        "mysql.password": null,
+        "mysql.database": null,
+        "created_at": null,
+        "updated_at": null
+      }
+    }, {
+      "table": "queries",
+      "columns": {
+        "id": "++",
+        "connection_id": null,
+        "tab_id": null,
+        "text": null,
+        "created_at": null,
+        "updated_at": null
+      }
+    }]
+  }
+}

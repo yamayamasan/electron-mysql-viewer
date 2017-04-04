@@ -43,7 +43,12 @@ class State {
     return data;
   }
 
-  set(key, val) {
+  set(key, val, isSync = false) {
+    if (isSync) {
+      return this.communicator.sendSync('state:set.sync', {
+        [key]: val,
+      });
+    }
     this.communicator.send('state:set', {
       [key]: val,
     });

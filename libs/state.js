@@ -36,6 +36,15 @@ class State {
       ev.sender.send('state:set:res', arg, this.old);
     });
 
+    this.ipc.on('state:set.sync', (ev, arg) => {
+      const key = Object.keys(arg)[0];
+      this.set(key, arg[key]);
+      ev.returnValue = {
+        data: arg,
+        old: this.old,
+      };
+    });
+
     this.ipc.on('state:get', (ev, arg) => {
       const key = arg.key;
       const def = arg.def;

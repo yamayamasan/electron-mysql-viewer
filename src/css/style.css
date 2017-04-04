@@ -24,3 +24,7 @@
     bottom: -327px;
     position: fixed;
 }
+
+.display-block {
+    display: block;
+}

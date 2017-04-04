@@ -629,6 +629,10 @@ minimist@^1.2.0:
   dependencies:
     minimist "0.0.8"
 
+moment@^2.18.1:
+  version "2.18.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
+
 ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
@@ -921,6 +925,12 @@ riot-observable@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/riot-observable/-/riot-observable-3.0.0.tgz#8bbd2daf72a2141bb043082df4023dc504bad2eb"
 
+riot-route@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/riot-route/-/riot-route-3.1.1.tgz#5d73688944d0090b1cb1cbd190eb323fefec5c9c"
+  dependencies:
+    riot-observable "^3.0.0"
+
 riot-tmpl@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/riot-tmpl/-/riot-tmpl-3.0.3.tgz#35f070c552cd70d78645d33de94aa5248d57ae50"
@@ -1127,7 +1137,7 @@ util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
 
-uuid@^3.0.0:
+uuid@^3.0.0, uuid@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
 

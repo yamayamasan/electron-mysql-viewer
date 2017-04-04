@@ -1,22 +1,27 @@
 const mysql = require('mysql');
 const tunnel = require('tunnel-ssh').tunnel;
+const moment = require('moment');
+const _ = require('lodash');
+const Uuid = require('uuid');
 
 class MysqlClient {
 
   constructor() {
-
+    this.connections = {};
+    this.active = null;
+    this.queries = this.q = require('../constants/queries.json');
   }
 
   preConnection() {
     if (state.has('connection')) {
       const connection = state.get('connection');
       this.closeConnection(connection);
-      // session.clearConnection();
     }
   }
 
   getConnection(options) {
     this.preConnection();
+    state.set('connection_options', options);
     const config = MysqlClient.setConfig(options);
     if (options.type === 1) {
       return new Promise((resolve) => {
@@ -49,12 +54,85 @@ class MysqlClient {
   }
 
   getConnectionDirect(config) {
+    const uuid = Uuid.v4();
     state.set('connectionInfo', config);
-    return mysql.createConnection(config.mysql);
+    state.set('con_uuid', uuid, true);
+    this.active = uuid;
+    this.connections[uuid] = mysql.createConnection(config.mysql);
+    return this.connections[uuid];
   }
 
-  closeConnection(connection) {
+  openConnection(uuid, cb) {
+    return new Promise((resolve) => {
+      this.connections[uuid].connect((err) => {
+        if (err) return reject(false);
+        resolve(true);
+      });
+    });
+  }
+
+  closeConnection() {
     connection.end();
+  }
+
+  getProcesslist(uuid = null) {
+    return this.execQuery(this.q.show_processlist, uuid);
+  }
+
+  getDatabases(uuid = null) {
+    return this.execQuery(this.q.show_databases, uuid);
+  }
+
+  getTables(uuid = null) {
+    return this.execQuery(this.q.show_tables, uuid);
+  }
+
+  descTable(table, uuid = null) {
+    const query = this.q.desc_table.replace('%TABLE%', table);
+    return this.execQuery(query, uuid);
+  }
+
+  execQuery(sql, uuid = null) {
+    return new Promise(async(resolve, reject) => {
+      uuid = uuid || this.active;
+      let connection = this.connections[uuid];
+      if (connection) {
+        this.closeConnection(connection);
+        await this.getConnection(state.get('connection_options'));
+        this.openConnection(this.active);
+        connection = this.connections[this.active];
+      }
+      sql = this.fmtSql(sql);
+      if (sql.match(/;/g).length == 1) {
+        if (!connection || !sql) reject(false);
+        const start = new Date();
+        connection.query(sql, (err, rows, fields) => {
+          const end = new Date();
+          if (err) reject(false);
+          resolve({
+            rows,
+            fields,
+            localtime: moment(end).diff(start)
+          });
+        });
+      } else {
+        console.error('sql faild', sql);
+        state.set('push:toast', { type: 'error', title: 'sql error' });
+        reject(false);
+      }
+    });
+  }
+
+  fmtSql(_sql) {
+    _sql = _.trim(_sql);
+    if (!_.endsWith(_sql, ';')) {
+      return `${_sql};`;
+    }
+    return _sql;
+  }
+
+  getUuids() {
+    return Object.keys(this.connections);
   }
 
   static setConfig(options) {
@@ -63,17 +141,17 @@ class MysqlClient {
       tunnel: {},
       mysql: {},
     }
-    const mysql = Object.assign({}, _.omit(options.mysql, 'port'));
-    config.mysql.port = options.mysql.port;
-    // let mysqlPort = options.mysql.port;
+    config.mysql = Object.assign(config.mysql, options.mysql);
     if (options.type === 2) {
-      // 要修正
       const tunnelPort = Math.round(Math.random() * 10000);
       config.mysql.port = tunnelPort;
-
-      config.tunnel.dstPort = config.mysql.port;
-      config.tunnel.srcPort = tunnelPort;
-      config.tunnel = Object.assign(config.tunnel, options.ssh);
+      config.tunnel = {
+        host: options.ssh.host,
+        srcPort: tunnelPort,
+        dstPort: options.mysql.port,
+        username: options.ssh.user,
+        password: options.ssh.password
+      };
       if (options.ssh.privateKey) {
         config.tunnel.privateKey = require('fs').readFileSync(options.ssh.privateKey);
       }
@@ -81,10 +159,6 @@ class MysqlClient {
         config.tunnel.dstHost = options.ssh.disthost;
       }
     }
-
-    config.mysql = Object.assign(config.mysql, mysql);
-
-    console.log('config', config);
 
     return config;
   }

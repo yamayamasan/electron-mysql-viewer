@@ -1,30 +1,20 @@
 <editor>
-  <div id="editor"></div>
-
   <div class="row">
     <div class="col s12">
       <div>
-        <a class="waves-effect waves-light btn">button</a>
+        <button class="waves-effect waves-light btn btn-floating" onclick={ run }>
+          <i class="material-icons medium">play_circle_outline</i>
+        </button>
+        <a class="waves-effect waves-light btn btn-floating" onclick={ stop }>
+          <i class="material-icons medium">pause_circle_outline</i>
+        </a>
         <a class="waves-effect waves-light btn">button</a>
         <a class="waves-effect waves-light btn">button</a>
       </div>
     </div>
   </div>
+  <div id="editor"></div>
 
-  <!--
-  <div class="row">
-    <div class="col s12">
-      <div class="cus-fixed-action-btn fixed-action-btn toolbar active light-blue lighten-4">
-        <ul>
-          <li class="waves-effect waves-light"><a href="#!" style="opacity: 1;"><i class="material-icons">insert_chart</i></a></li>
-          <li class="waves-effect waves-light"><a href="#!" style="opacity: 1;"><i class="material-icons">format_quote</i></a></li>
-          <li class="waves-effect waves-light"><a href="#!" style="opacity: 1;"><i class="material-icons">publish</i></a></li>
-          <li class="waves-effect waves-light"><a href="#!" style="opacity: 1;"><i class="material-icons">attach_file</i></a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  -->
   <style>
     #editor {
       height: 200px;
@@ -42,12 +32,56 @@
   </style>
   <script>
     require('ace-min-noconflict');
-    // require('ace-min-noconflict/mode-javascript');
-
+    require('ace-min-noconflict/mode-mysql');
+    require('ace-min-noconflict/snippets/text');
+    require('ace-min-noconflict/snippets/mysql');
+    require('ace-min-noconflict/ext-language_tools');
     let editor = null;
-    this.on('mount', () => {
+
+    state.observe('project', async(project) => {
+      const queries = await idxdb.get('queries', {
+        connection_id: project.id,
+      });
+      if (queries) editor.setValue(queries.text);
+    });
+
+    const execRun = () => {
+      const text = editor.getCopyText() || editor.getValue();
+      state.set('query', text);
+      state.set('editor-text', editor.getValue());
+    }
+
+    const execStop = () => {
+
+    };
+
+    stop() {
+
+    }
+
+    run() {
+      execRun();
+    }
+
+    this.on('mount', async() => {
       editor = ace.edit("editor");
       editor.$blockScrolling = Infinity;
+      editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+      });
+      editor.getSession().setMode("ace/mode/mysql");
+      editor.commands.addCommand({
+        name: 'exec run',
+        bindKey: {
+          win: 'Ctrl-Enter',
+          mac: 'Command-Enter'
+        },
+        exec: function(editor) {
+          execRun();
+        },
+      });
     });
   </script>
 </editor>

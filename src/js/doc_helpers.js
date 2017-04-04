@@ -1,3 +1,5 @@
+const inputElements = {};
+
 const $$ = (e) => {
   const _e = document.querySelector(e);
   if (!_e.toggleAttribute) {
@@ -14,7 +16,7 @@ const $$ = (e) => {
 };
 
 // input text
-const $$texts = () => {
+const setInputEvent = () => {
   const labels = document.querySelectorAll('label');
   labels.forEach((label) => {
     const tgtId = label.getAttribute('for');
@@ -30,6 +32,43 @@ const $$texts = () => {
           }
         }, 50);
       });
+    }
+  });
+};
+// 
+const $$texts = () => {
+  document.querySelector('body').addEventListener('change', (e) => {
+    setInputEvent();
+  });
+  setInputEvent();
+};
+
+const accordionClick = (acr) => {
+  acr.onclick = function(e) {
+    this.classList.toggle('active');
+    const children = this.children;
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (child.classList.contains('collapsible-header')) {
+        child.classList.toggle('active');
+      }
+      if (child.classList.contains('collapsible-body')) {
+        child.classList.toggle('display-block');
+      }
+    }
+  }
+};
+
+const $$accordion = () => {
+  const li = document.querySelectorAll('.collapsible');
+  li.forEach((e) => {
+    const attr = e.getAttribute('data-collapsible');
+    if (attr && attr === 'accordion') {
+      const list = e.children;
+      for (let i = 0; i < list.length; i++) {
+        const child = list[i];
+        accordionClick(child);
+      }
     }
   });
 };
