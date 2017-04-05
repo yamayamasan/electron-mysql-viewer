@@ -1,17 +1,33 @@
 <operation>
   <div class="row">
     <div class="col tables-nav">
-      <button id="close-table-nav" class="waves-effect waves-light btn btn-floating" onclick={ closeSlide }>
+      <button id="close-table-nav" class="waves-effect waves-light btn btn-floating red lighten-1" onclick={ closeSlide }>
         <i class="material-icons medium">close</i>
       </button>
       <div class="clearfix"></div>
-      <ul class="collection with-header">
+      <ul class="collection with-header z-depth-3">
         <li class="collection-header">
           <h6>DB Name</h6>
+            <ul id='dropdown1' class='dropdown-content'>
+    <li><a href="#!">one</a></li>
+    <li><a href="#!">two</a></li>
+    <li class="divider"></li>
+    <li><a href="#!">three</a></li>
+    <li><a href="#!"><i class="material-icons">view_module</i>four</a></li>
+    <li><a href="#!"><i class="material-icons">cloud</i>five</a></li>
+  </ul>
         </li>
         <li class="collection-item" each={ table in vv.tables }>
           <div>
-            <a href="#!" class="secondary-content"><i class="material-icons">more_vert</i></a>
+            <ul class='table-acts'>
+              <li class='table-act'><a class="btn-floating red" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">insert_chart</i></a></li>
+              <li class='table-act'><a class="btn-floating yellow darken-1" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">format_quote</i></a></li>
+              <li class='table-act'><a class="btn-floating green" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">publish</i></a></li>
+              <li class='table-act'><a class="btn-floating blue" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">attach_file</i></a></li>
+            </ul>
+            <a href="#!" class="secondary-content" onclick={ onTblAct }>
+              <i class="material-icons">more_vert</i>
+            </a>
             <span>{ table }</span>
           </div>
         </li>
@@ -102,6 +118,26 @@
       left: 0;
       display: none;
     }
+    ul.table-acts { 
+      position: fixed; 
+      width: 210px;
+      margin-top: -9px;
+    } 
+    li.table-act{ 
+      float: left; 
+      padding: 0px 5px;
+      transform: scale(0);
+      transition-duration: 0.5s;
+      display: none;
+    } 
+    li.table-act.active{ 
+      transform: scale(1);
+      transition-duration: 0.5s;
+    }
+    .mis {
+          transform: scale(0);
+      transition-duration: 0.5s;
+    }
   </style>
   <script>
     const csv = new Csv();
@@ -116,6 +152,11 @@
     }, this);
 
     let connection = null;
+
+    onTblAct(e) {
+      console.log(e);
+
+    }
 
     csvDownload() {
       const fields = view.get('fields');
@@ -190,6 +231,7 @@
     const setTables = async() => {
       const res = await mysql.getTables();
       view.set('tables', res.rows.map((table) => {
+        console.log(table);
         return table[Object.keys(table)[0]];
       }));
     };

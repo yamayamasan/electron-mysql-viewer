@@ -3,10 +3,10 @@
     <div class="col s12">
       <div>
         <button class="waves-effect waves-light btn btn-floating" onclick={ slide }>
-          <i class="material-icons medium">play_circle_outline</i>
+          <i class="material-icons medium">list</i>
         </button>
         <button class="waves-effect waves-light btn btn-floating" onclick={ run }>
-          <i class="material-icons medium">play_circle_outline</i>
+          <i class="material-icons medium">play_for_work</i>
         </button>
         <button class="waves-effect waves-light btn btn-floating" onclick={ stop }>
           <i class="material-icons medium">pause_circle_outline</i>
