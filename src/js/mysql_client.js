@@ -9,6 +9,7 @@ class MysqlClient {
   constructor() {
     this.connections = {};
     this.active = null;
+    this.threadId = null;
     this.queries = this.q = require('../constants/queries.json');
   }
 
@@ -66,13 +67,31 @@ class MysqlClient {
     return new Promise((resolve) => {
       this.connections[uuid].connect((err) => {
         if (err) return reject(false);
+        this.threadId = this.connections[uuid].threadId;
+        state.set('threadId', this.threadId);
         resolve(true);
       });
     });
   }
 
-  closeConnection() {
+  processKill() {
+    this.getProcesslist().then((processlist) => {
+      // process check
+      const query = this.q.kill_process.replace('%PID%', this.threadId);
+      this.execQuery(query);
+      setTimeout(async() => {
+        await this.getConnection(state.get('connection_options'));
+        this.openConnection(this.active);
+      }, 2000);
+    });
+  }
+
+  closeConnection(uuid = null) {
+    uuid = uuid || this.active;
+    let connection = this.connections[uuid];
     connection.end();
+    delete this.connections[uuid];
+    console.log('[close connection]', this.connections);
   }
 
   getProcesslist(uuid = null) {
@@ -96,8 +115,7 @@ class MysqlClient {
     return new Promise(async(resolve, reject) => {
       uuid = uuid || this.active;
       let connection = this.connections[uuid];
-      if (connection) {
-        this.closeConnection(connection);
+      if (!connection) {
         await this.getConnection(state.get('connection_options'));
         this.openConnection(this.active);
         connection = this.connections[this.active];
@@ -106,6 +124,7 @@ class MysqlClient {
       if (sql.match(/;/g).length == 1) {
         if (!connection || !sql) reject(false);
         const start = new Date();
+        // timeout: 60000
         connection.query(sql, (err, rows, fields) => {
           const end = new Date();
           if (err) reject(false);

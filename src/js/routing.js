@@ -16,6 +16,7 @@ const routing = [
   { tag: 'top', path: '/' },
   { tag: 'connection-edit', path: '/connections/edit/:id/' },
   { tag: 'operation', path: '/operation/:id/' },
+  { tag: 'dashboard', path: '/dashboard/:id/' },
 ];
 
 

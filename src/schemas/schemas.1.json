@@ -24,8 +24,16 @@
       "table": "queries",
       "columns": {
         "id": "++",
-        "connection_id": null,
-        "tab_id": null,
+        "project_id": null,
+        "text": null,
+        "created_at": null,
+        "updated_at": null
+      }
+    }, {
+      "table": "history_queries",
+      "columns": {
+        "id": "++",
+        "project_id": null,
         "text": null,
         "created_at": null,
         "updated_at": null

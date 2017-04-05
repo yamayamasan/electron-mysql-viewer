@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class State {
   constructor(communicator) {
     this.communicator = communicator;
@@ -35,12 +37,13 @@ class State {
     return this.communicator.sendSync('state:has', { key });
   }
 
-  get(key, def = null) {
+  get(key, keys = [], def = null) {
     const data = this.communicator.sendSync('state:get', {
       key,
       def,
     });
-    return data;
+    if (typeof keys == 'string') keys = [keys];
+    return keys.length === 0 ? data : _.pick(data, keys);
   }
 
   set(key, val, isSync = false) {

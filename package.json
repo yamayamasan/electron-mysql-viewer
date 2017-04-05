@@ -1,5 +1,5 @@
 {
-  "name": "electron-mysql-viewer-riot",
+  "name": "electron-mysql-viewer",
   "version": "1.0.0",
   "main": "main.js",
   "license": "MIT",

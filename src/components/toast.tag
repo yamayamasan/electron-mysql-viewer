@@ -19,7 +19,7 @@
 
     this.on('mount', () => {
       view.sets({
-        title: this.opts.msg
+        title: this.opts.title
       });
       setTimeout(() => {
         this.unmount(true);

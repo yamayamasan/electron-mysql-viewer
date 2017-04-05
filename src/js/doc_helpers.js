@@ -60,6 +60,9 @@ const accordionClick = (acr) => {
 };
 
 const $$accordion = () => {
+  document.querySelector('body').addEventListener('change', (a) => {
+    console.log(a);
+  });
   const li = document.querySelectorAll('.collapsible');
   li.forEach((e) => {
     const attr = e.getAttribute('data-collapsible');
@@ -72,3 +75,13 @@ const $$accordion = () => {
     }
   });
 };
+
+const $$domWatcher = (e, cb, options) => {
+  const obs = new MutationObserver(cb);
+  obs.observe(e, {
+    attributes: true,
+    childList: true,
+    // subtree: true,
+    // attributeFilter: filter
+  });
+}

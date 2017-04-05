@@ -2,14 +2,19 @@
   <div class="row">
     <div class="col s12">
       <div>
+        <button class="waves-effect waves-light btn btn-floating" onclick={ slide }>
+          <i class="material-icons medium">play_circle_outline</i>
+        </button>
         <button class="waves-effect waves-light btn btn-floating" onclick={ run }>
           <i class="material-icons medium">play_circle_outline</i>
         </button>
-        <a class="waves-effect waves-light btn btn-floating" onclick={ stop }>
+        <button class="waves-effect waves-light btn btn-floating" onclick={ stop }>
           <i class="material-icons medium">pause_circle_outline</i>
-        </a>
+        </button>
         <a class="waves-effect waves-light btn">button</a>
-        <a class="waves-effect waves-light btn">button</a>
+        <button class="waves-effect waves-light btn btn-floating">
+          <i class="material-icons medium">dashboard</i>
+        </button>
       </div>
     </div>
   </div>
@@ -40,9 +45,9 @@
 
     state.observe('project', async(project) => {
       const queries = await idxdb.get('queries', {
-        connection_id: project.id,
+        project_id: project.id,
       });
-      if (queries) editor.setValue(queries.text);
+      if (queries) editor.setValue(queries.text, -1);
     });
 
     const execRun = () => {
@@ -52,11 +57,15 @@
     }
 
     const execStop = () => {
-
+      mysql.processKill();
     };
 
-    stop() {
+    slide() {
+      state.set('slide', true);
+    }
 
+    stop() {
+      execStop();
     }
 
     run() {
