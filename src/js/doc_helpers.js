@@ -1,7 +1,17 @@
 const inputElements = {};
 
+const $$$ = (e, cb = null) => {
+  const ar = [];
+  document.querySelectorAll(e).forEach((d) => {
+    const dd = $$(d);
+    if (cb) cb(dd);
+    ar.push(dd);
+  });
+  return ar;
+}
+
 const $$ = (e) => {
-  const _e = document.querySelector(e);
+  const _e = (typeof e === 'string') ? document.querySelector(e) : e;
   if (!_e.toggleAttribute) {
     _e.toggleAttribute = function(key, val) {
       const exist = this.hasAttribute(key);

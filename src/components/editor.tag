@@ -43,16 +43,9 @@
     require('ace-min-noconflict/ext-language_tools');
     let editor = null;
 
-    state.observe('project', async(project) => {
-      const queries = await idxdb.get('queries', {
-        project_id: project.id,
-      });
-      if (queries) editor.setValue(queries.text, -1);
-    });
-
     const execRun = () => {
       const text = editor.getCopyText() || editor.getValue();
-      state.set('query', text);
+      state.set('execquery', text);
       state.set('editor-text', editor.getValue());
     }
 
@@ -81,6 +74,13 @@
         enableLiveAutocompletion: true
       });
       editor.getSession().setMode("ace/mode/mysql");
+
+      const project = state.get('project');
+      const queries = await idxdb.get('queries', {
+        project_id: project.id,
+      });
+      if (queries) editor.setValue(queries.text, -1);
+
       editor.commands.addCommand({
         name: 'exec run',
         bindKey: {
@@ -91,6 +91,7 @@
           execRun();
         },
       });
+
     });
   </script>
 </editor>

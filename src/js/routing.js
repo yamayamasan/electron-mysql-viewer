@@ -44,17 +44,5 @@ routing.forEach((r) => {
   });
 });
 
-// default
 routeUp('top');
 route.start();
-
-/*
-router.routes([
-  new Router.Route({ tag: 'top', path: '/' }),
-  new Router.Route({ tag: 'connection-edit', path: '/connections/edit' }),
-  new Router.Route({ tag: 'operation', path: '/operation' }),
-  new Router.DefaultRoute({ tag: 'top' })
-])
-riot.mount('*');
-router.start();
-*/

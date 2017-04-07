@@ -13,7 +13,7 @@
             <div class="col s12">
               <input name="type" type="radio" id="radio_type_1" value="1" checked={!vv.isSsh} onclick={ onRadio } />
               <label for="radio_type_1">standard</label>
-              <input name="type" type="radio" id="radio_type_2" checked={vv.isSsh} onclick={ onRadio }/>
+              <input name="type" type="radio" id="radio_type_2" value="2" checked={vv.isSsh} onclick={ onRadio }/>
               <label for="radio_type_2">standard over SSH</label>
             </div>
             <div class="input-field col s12" if={vv.isSsh}>
@@ -79,20 +79,41 @@
       tgt.toggleAttribute('readonly', 'readonly');
     }
 
-    onCancel() {
+    onSubmit = async(e) => {
+      e.preventDefault();
+      const forms = {};
+      _.forEach(e.target, (tgt, idx) => {
+        switch (tgt.type) {
+          case 'radio':
+            console.log();
+            if (tgt.checked) _.set(forms, tgt.name, Number(tgt.value));
+            break;
+          case 'text':
+          case 'password':
+            _.set(forms, tgt.name, tgt.value);
+            break;
+        }
+      });
+      const connection = await mysql.getConnection(forms);
+      connection.connect((err) => {
+        if (err) {
+          console.error(`error connecting: ${err.stack}`);
+          return;
+        }
+        idxdb.add('projects', forms);
+        mysql.closeConnection();
+        location.hash = '/';
+      });
+    };
 
-    }
-
-    onSave() {
-
-    }
-
+    /*
     onSubmit(e) {
       e.preventDefault();
       const forms = {};
       _.forEach(e.target, (tgt, idx) => {
         switch (tgt.type) {
           case 'radio':
+            console.log();
             if (tgt.checked) _.set(forms, tgt.name, Number(tgt.value));
             break;
           case 'text':
@@ -113,6 +134,7 @@
         });
       }).call();
     }
+    */
 
     this.on('mount', async() => {
       $$texts();

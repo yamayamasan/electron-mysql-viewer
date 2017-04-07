@@ -9,7 +9,9 @@ class View {
   }
 
   init() {
-    this.context.vv = Object.assign({}, this.params);
+    this.context.vv = Object.assign({}, this.params, {
+      h: helper
+    });
     this.context.update();
   }
 
@@ -34,6 +36,10 @@ class View {
   restore(key, isUpdate = false) {
     this.context.vv[key] = this.params[key];
     if (isUpdate) this.context.update();
+  }
+
+  fire() {
+    this.context.update();
   }
 }
 

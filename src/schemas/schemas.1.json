@@ -38,6 +38,17 @@
         "created_at": null,
         "updated_at": null
       }
+    }, {
+      "table": "mysql_tables",
+      "columns": {
+        "id": "++",
+        "project_id": null,
+        "database": null,
+        "name": null,
+        "columns": null,
+        "created_at": null,
+        "updated_at": null
+      }
     }]
   }
 }

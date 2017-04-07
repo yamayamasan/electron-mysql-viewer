@@ -11,6 +11,9 @@ class MysqlClient {
     this.active = null;
     this.threadId = null;
     this.queries = this.q = require('../constants/queries.json');
+    this.default = {
+      timeout: 60000,
+    };
   }
 
   preConnection() {
@@ -64,7 +67,7 @@ class MysqlClient {
   }
 
   openConnection(uuid, cb) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.connections[uuid].connect((err) => {
         if (err) return reject(false);
         this.threadId = this.connections[uuid].threadId;
@@ -124,14 +127,14 @@ class MysqlClient {
       if (sql.match(/;/g).length == 1) {
         if (!connection || !sql) reject(false);
         const start = new Date();
-        // timeout: 60000
         connection.query(sql, (err, rows, fields) => {
           const end = new Date();
           if (err) reject(false);
           resolve({
+            total: rows.total,
             rows,
             fields,
-            localtime: moment(end).diff(start)
+            localtime: moment(end).diff(start),
           });
         });
       } else {

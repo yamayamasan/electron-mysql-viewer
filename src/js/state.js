@@ -38,15 +38,17 @@ class State {
   }
 
   get(key, keys = [], def = null) {
-    const data = this.communicator.sendSync('state:get', {
+    let data = this.communicator.sendSync('state:get', {
       key,
       def,
     });
+    data = State.deObject(data);
     if (typeof keys == 'string') keys = [keys];
     return keys.length === 0 ? data : _.pick(data, keys);
   }
 
   set(key, val, isSync = false) {
+    if (typeof val !== 'string') val = JSON.stringify(val);
     if (isSync) {
       return this.communicator.sendSync('state:set.sync', {
         [key]: val,
@@ -66,8 +68,18 @@ class State {
   observe(key, cb) {
     this.communicator.on('state:set:res', (event, arg, old) => {
       const okey = Object.keys(arg)[0];
-      if (okey === key) cb(arg[key], old[key]);
+      if (okey === key) cb(State.deObject(arg[key]), State.deObject(old[key]));
     });
+  }
+
+  static deObject(string) {
+    let decode = string;
+    if (string && string.match(/^\{\".*\}$|^\[.+\]$/)) {
+      try {
+        decode = JSON.parse(string);
+      } catch (e) {}
+    }
+    return decode;
   }
 }
 
