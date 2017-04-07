@@ -15,6 +15,10 @@
         <button class="waves-effect waves-light btn btn-floating">
           <i class="material-icons medium">dashboard</i>
         </button>
+
+        <button class="waves-effect waves-light btn btn-floating" onclick={ toggleSize }>
+          <i class="material-icons medium">pause_circle_outline</i>
+        </button>
       </div>
     </div>
   </div>
@@ -42,16 +46,33 @@
     require('ace-min-noconflict/snippets/mysql');
     require('ace-min-noconflict/ext-language_tools');
     let editor = null;
+    const aopts = {
+      fontsize: {
+        is: true,
+        s: 10,
+        m: 12,
+        l: 14,
+      }
+    };
 
     const execRun = () => {
       const text = editor.getCopyText() || editor.getValue();
-      state.set('execquery', text);
+      state.set('execquery', text.trim());
       state.set('editor-text', editor.getValue());
     }
 
     const execStop = () => {
       mysql.processKill();
     };
+
+    toggleSize() {
+      console.log(editor.getSession().getMarkers())
+        /*
+        aopts.fontsize.is = !aopts.fontsize.is;
+        const size = aopts.fontsize.is ? aopts.fontsize.m : aopts.fontsize.l;
+        editor.setFontSize(size);
+        */
+    }
 
     slide() {
       state.set('slide', true);

@@ -131,7 +131,7 @@ class MysqlClient {
           const end = new Date();
           if (err) reject(false);
           resolve({
-            total: rows.total,
+            total: rows.length,
             rows,
             fields,
             localtime: moment(end).diff(start),

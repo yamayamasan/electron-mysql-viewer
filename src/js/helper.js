@@ -6,6 +6,12 @@ class Helper {
     return arr.map(v => v[key]);
   }
 
+  isColDateType(field) {
+    return (field.toUpperCase() === 'DATE' ||
+      field.toUpperCase() === 'DATETIME'
+    );
+  }
+
   saveQueryText(proId, text) {
     const cond = {
       project_id: proId
@@ -28,10 +34,10 @@ class Helper {
     return state.get(key);
   }
 
-  convval(val) {
-    const type = typeof val;
-    if (type === 'object' && val !== null) {
-      if (_.isDate(val)) return moment(val).format('YYYY-MM-DD HH:mm:ss');
+  convval(val, v, desc) {
+    if (desc[v] && val !== null) {
+      if (desc[v].Type === 'date') return moment(val).format('YYYY-MM-DD');
+      if (desc[v].Type === 'datetime') return moment(val).format('YYYY-MM-DD HH:mm:ss');
     }
     return val;
   }

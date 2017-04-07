@@ -6,6 +6,7 @@
           <li>
             <div class="collapsible-header"><i class="material-icons">filter_drama</i>Info</div>
             <div class="collapsible-body">
+              <p>time: { vv.time }</p>
               <p>total: { vv.total }</p>
               <p>query: { vv.query }</p>
             </div>
@@ -19,17 +20,22 @@
     const view = new View({
       total: null,
       query: null,
+      time: null,
     }, this);
 
-    const queried = (query) => {
-
+    const queried = (result) => {
+      view.sets({
+        query: state.get('execquery'),
+        total: result.total,
+        time: result.localtime,
+      })
     };
 
     this.on('mount', async() => {
       $$domWatcher($$('query-info'), () => {
         $$accordion();
       });
-      state.observe('execquery', queried);
+      state.observe('result', queried);
     });
   </script>
 </query-info>

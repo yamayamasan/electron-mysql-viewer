@@ -266,11 +266,18 @@
       const res = await mysql.execQuery(query);
       if (!res) return;
 
+      let desc = null;
+      if (res.fields && query.match(/^select/i)) {
+        desctable = await mysql.descTable(res.fields[0].table);
+        desc = desctable.rows;
+      }
       state.sets({
         result: {
           total: res.total,
           fields: res.fields,
           rows: res.rows,
+          localtime: res.localtime,
+          desc,
         },
         queried: true,
       });

@@ -10,7 +10,10 @@
       <tbody id="data-tbody">
         <tr each={row in vv.rows}>
           <!--<td each={ val, v in row } class="data-td tbl_col_{v}">{ vv.h.convval(val, v) }</td>-->
-          <td each={ val, v in row } class="tbl_col_{v} { viewCol.bind(this, v).call() }">{ vv.h.convval(val, v) }</td>
+          <!--<td each={ val, v in row } class="tbl_col_{v} { viewCol.bind(this, v).call() }">{ vv.h.convval(val, v, vv.desc) }</td>-->
+          <td each={ val, v in row } class="tbl_col_{v} { viewCol.bind(this, v).call() }">
+            { vv.h.convval(val, v, vv.desc) }
+          </td>
         </tr>
       </tbody>
     </table>
@@ -21,6 +24,7 @@
       fields: [],
       rows: [],
       isData: false,
+      desc: null,
     }, this);
 
     const lineHeight = 22 + (15 * 2); // テーブルの一行の高さ [高さ + padding]
@@ -59,8 +63,14 @@
     };
 
     state.observe('result', (result) => {
+      // TIMESTAMPも入れるか？
+      const datecols = {};
+      if (result.desc) {
+        result.desc.filter(d => helper.isColDateType(d.Type)).forEach(d => datecols[d.Field] = d);
+      }
       view.sets({
         fields: result.fields,
+        desc: datecols,
       });
       setScl(result.rows);
 
