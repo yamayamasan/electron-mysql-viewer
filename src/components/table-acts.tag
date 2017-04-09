@@ -2,20 +2,20 @@
   <div class="row data-tbl-acts" if={ vv.h.getState.bind(this, 'queried').call() }>
     <div class="col s12">
       <button class="waves-effect waves-light btn btn-floating" onclick={ csvDownload }>
-        <i class="material-icons medium">play_circle_outline</i>
+        <i class="material-icons medium">file_download</i>
       </button>
       <button class="waves-effect waves-light btn btn-floating" onclick={ filterCol }>
-        <i class="material-icons medium">play_circle_outline</i>
+        <i class="material-icons medium">filter_list</i>
       </button>
       <!--<button class="waves-effect waves-light btn btn-floating" onclick={ vv.h.setState.bind(this, 'onToggleTblSize', true) }>
         <i class="material-icons medium">play_circle_outline</i>
       </button>-->
     </div>
-    <div>
+    <div class='card'>
       <ul id='filter-cols' class='dropdown-content'>
         <li each={ col in vv.fields }>
           <input type="checkbox" id="filter_{col.name}" name="col_filters.{col.name}" checked/>
-          <label for="filter_{ col.name }">{ col.name }</label>
+          <label for="filter_{ col.name }" class='check-on-dialog'>{ col.name }</label>
         </li>
         <li>
           <a href="#!" class="waves-effect waves-light" onclick={ updateFilter }>
@@ -25,6 +25,13 @@
       </ul>
     </div>
   </div>
+  <style>
+    .check-on-dialog {
+      min-height: 50px;
+      width: 100%;
+      margin: 12px 12px -12px 12px;
+    }
+  </style>
 
   <script>
     const view = new View({

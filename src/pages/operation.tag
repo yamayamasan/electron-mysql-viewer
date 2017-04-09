@@ -4,7 +4,8 @@
     <!-- table list -->
     <div class="col tables-nav">
       <!--<button id="close-table-nav" class="waves-effect waves-light btn btn-floating red lighten-1" onclick={ closeSlide }>-->
-      <button id="close-table-nav" class="waves-effect waves-light btn btn-floating red lighten-1" onclick={ vv.h.setState.bind(this, 'slide', false) }>
+      <button id="close-table-nav" class="waves-effect waves-light btn btn-floating red lighten-1" onclick={ vv.h.setState.bind(this,
+        'slide', false) }>
         <i class="material-icons medium">close</i>
       </button>
       <div class="clearfix"></div>
@@ -18,15 +19,25 @@
         </li>
         <li class="collection-item" each={ table in vv.tables }>
           <div>
-            <a href="#!" class="secondary-content" onclick={ onTblAct }>
+            <a href="#!" class="secondary-content" onclick={ onTblAct.bind(this, table) }>
               <i class="material-icons">more_vert</i>
             </a>
             <span>{ table }</span>
-            <ul class='table-acts'>
-              <li class='table-act'><a class="btn-floating red" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">insert_chart</i></a></li>
-              <li class='table-act'><a class="btn-floating yellow darken-1" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">format_quote</i></a></li>
-              <li class='table-act'><a class="btn-floating green" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">publish</i></a></li>
-              <li class='table-act'><a class="btn-floating blue" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">attach_file</i></a></li>
+            <ul class='{ table }_btns table-acts'>
+              <li class='table-act'>
+                <a class="btn-floating red" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">insert_chart</i></a>
+              </li>
+              <li class='table-act'>
+                <a class="btn-floating yellow darken-1" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">format_quote</i></a>
+              </li>
+              <li class='table-act'>
+                <a class="btn-floating green" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">publish</i></a>
+              </li>
+              <!--
+              <li class='table-act'>
+                <a class="btn-floating blue" style="transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px); opacity: 1;"><i class="material-icons">attach_file</i></a>
+              </li>
+              -->
             </ul>
           </div>
         </li>
@@ -159,7 +170,14 @@
     ul.table-acts {
       position: fixed;
       width: 210px;
-      margin-top: -9px;
+      margin-top: -32px;
+      left: 8px;
+    }
+    
+    li.table-act.active {
+      transform: scale(1);
+      transition-duration: 0.5s;
+      display: block;
     }
     
     li.table-act {
@@ -217,10 +235,17 @@
       return 'test';
     }
 
-    onTblAct(e) {
+    onTblAct(table, e) {
       e.preventDefault();
-      console.log(e);
-
+      const children = $$(`.${table}_btns`).children;
+      for (let i = 0; i < children.length; i++) {
+        children[i].classList.toggle('active');
+      }
+      /*
+      $$(`.${table}_btns`).children.forEach((child) => {
+        child.classList.toggle('active');
+      });
+      */
     }
 
     // toggleTblSize() {
@@ -262,7 +287,7 @@
     const displayRowNum = 50;
     const viewHeight = 50;
     // mysql state
-    const queried = async(query) => {
+    const queried = async (query) => {
       const res = await mysql.execQuery(query);
       if (!res) return;
 
@@ -386,14 +411,14 @@
       document.querySelector('.tables-nav').classList.toggle('slide-open');
     });
 
-    const setTables = async() => {
+    const setTables = async () => {
       const res = await mysql.getTables();
       view.set('tables', res.rows.map((table) => {
         return table[Object.keys(table)[0]];
       }));
     };
 
-    this.on('mount', async() => {
+    this.on('mount', async () => {
       // $$domWatcher(document.querySelector('#operation-block'), () => {
       //   $$accordion();
       // });

@@ -6,19 +6,21 @@
           <i class="material-icons medium">list</i>
         </button>
         <button class="waves-effect waves-light btn btn-floating" onclick={ run }>
-          <i class="material-icons medium">play_for_work</i>
+          <i class="material-icons medium">play_arrow</i>
         </button>
         <button class="waves-effect waves-light btn btn-floating" onclick={ stop }>
-          <i class="material-icons medium">pause_circle_outline</i>
+          <i class="material-icons medium">stop</i>
         </button>
         <a class="waves-effect waves-light btn">button</a>
         <button class="waves-effect waves-light btn btn-floating">
           <i class="material-icons medium">dashboard</i>
         </button>
 
+        <!--
         <button class="waves-effect waves-light btn btn-floating" onclick={ toggleSize }>
           <i class="material-icons medium">pause_circle_outline</i>
         </button>
+        -->
       </div>
     </div>
   </div>
