@@ -7,41 +7,29 @@
           <!--<div class="card-content"></div>-->
           <div class="card-tabs">
             <ul class="tabs tabs-fixed-width">
-              <li class="tab"><a href="#test4">info</a></li>
-              <li class="tab"><a class="active" href="#test5">history</a></li>
-              <li class="tab"><a href="#test6">Test 3</a></li>
+              <li class="tab"><a href="#" class="active" onclick={ switchTab.bind(this, 'info') }>info</a></li>
+              <li class="tab"><a href="#" onclick={ switchTab.bind(this, 'history') }>history</a></li>
+              <li class="tab"><a href="#">Test 3</a></li>
             </ul>
           </div>
-          <div class="card-content grey lighten-4">
-            <div id="modal_info">Test 1</div>
-            <div id="modal_history">Test 2</div>
-            <div id="test6">Test 3</div>
+          <div class="card-content tab-content">
+            <div id="modal_info" class="">
+              <p>time: { vv.localtime }</p>
+              <p>total: { vv.total }</p>
+              <p>query: { vv.query }</p>
+            </div>
+            <div id="modal_history" class="none">
+              <ul>
+                <li each={ history in vv.histories }>{ history.text }</li>
+              </ul>
+            </div>
+            <div id="test6" class="none">
+
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <!--
-    <div class='row'>
-      <div class='col s12'>
-        <ul class="collapsible" data-collapsible="accordion">
-          <li>
-            <div class="collapsible-header"><i class="material-icons">filter_drama</i>Info</div>
-            <div class="collapsible-body padding-zero">
-              <ul class="tabs">
-                <li class="tab col s4"><a href="#test1">info</a></li>
-                <li class="tab col s4"><a class="active" href="#test2">history</a></li>
-                <li class="tab col s4"><a href="#test4">Test 4</a></li>
-              </ul>
-              <p>time: { vv.time }</p>
-              <p>total: { vv.total }</p>
-              <p>query: { vv.query }</p>
-
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    -->
   </div>
   <style>
     .fix-btm-right {
@@ -68,22 +56,46 @@
       time: null,
     }, this);
 
-    const queried = (result) => {
+    const queried = async(result) => {
+      const {
+        total,
+        localtime
+      } = result;
       view.sets({
         query: state.get('execquery'),
-        total: result.total,
-        time: result.localtime,
-      })
+        total,
+        localtime,
+      });
+
+      const project = state.get('project');
+      const histories = await idxdb.d('history_queries')
+        .where('project_id')
+        .equals(project.id)
+        .limit(100)
+        .reverse()
+        .sortBy('created_at');
+      view.set('histories', histories);
     };
+
+    switchTab(type, e) {
+      e.preventDefault();
+      $$$('.tab-content > div', (e) => {
+        if (e.id === `modal_${type}`) {
+          e.classList.remove('none');
+        } else {
+          e.classList.add('none');
+        }
+      });
+    }
 
     openInfo() {
       const modal = $$('.modal.bottom-sheet');
       modal.classList.toggle('open');
       const height = modal.clientHeight;
-      $$('.fix-btm-right').style.bottom = `${height}px`;      
+      $$('.fix-btm-right').style.bottom = `${height}px`;
     }
 
-    this.on('mount', async () => {
+    this.on('mount', async() => {
       $$domWatcher($$('query-info'), () => {
         $$accordion();
       });

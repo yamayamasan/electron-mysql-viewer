@@ -32,8 +32,15 @@ class State {
     this.ipc.on('state:set', (ev, arg) => {
       const key = Object.keys(arg)[0];
       this.set(key, arg[key]);
-
       ev.sender.send('state:set:res', arg, this.old);
+    });
+
+    this.ipc.on('state:remove', (ev, arg) => {
+      const { key } = arg;
+      this.set(key, null);
+      ev.returnValue = {
+        data: arg,
+      };
     });
 
     this.ipc.on('state:set.sync', (ev, arg) => {

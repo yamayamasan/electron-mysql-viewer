@@ -72,6 +72,16 @@ class State {
     });
   }
 
+  removes(values) {
+    values.forEach(key => this.remove(key));
+  }
+
+  remove(key) {
+    let data = this.communicator.sendSync('state:remove', {
+      key,
+    });
+  }
+
   static deObject(string) {
     let decode = string;
     if (string && string.match(/^\{\".*\}$|^\[.+\]$/)) {

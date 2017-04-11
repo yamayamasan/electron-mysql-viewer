@@ -147,10 +147,7 @@ class MysqlClient {
 
   fmtSql(_sql) {
     _sql = _.trim(_sql);
-    if (!_.endsWith(_sql, ';')) {
-      return `${_sql};`;
-    }
-    return _sql;
+    return (!_.endsWith(_sql, ';')) ? `${_sql};` : _sql;
   }
 
   getUuids() {
@@ -158,7 +155,6 @@ class MysqlClient {
   }
 
   static setConfig(options) {
-    console.log('options', options);
     const config = {
       tunnel: {},
       mysql: {},

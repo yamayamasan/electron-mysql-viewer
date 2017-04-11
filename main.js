@@ -1,11 +1,37 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
+const fs = require('fs');
 
 const config = require('./config/app.json');
+const initConfigPath = './config/init.json';
 
 let win = null;
 
+function generateKey() {
+  const crypto = require('crypto');
+  const os = require('os');
+  const secret = Date();
+  const text = `${os.hostname()}_${os.arch()}_${os.platform()}`;
+  return crypto.createHmac('sha256', secret)
+    .update(text)
+    .digest('hex');
+}
+
+
+function init() {
+  try {
+    fs.statSync(initConfigPath);
+  } catch (e) {
+    const json = {
+      secret: generateKey(),
+    };
+
+    fs.writeFileSync(initConfigPath, JSON.stringify(json, null, ' '));
+  }
+}
+
 function createWindow() {
+  init();
   win = new BrowserWindow(config.main);
   win.loadURL(url.format({
     pathname: `${__dirname}/src/index.html`,

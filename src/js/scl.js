@@ -1,27 +1,21 @@
 class Scl {
   constructor(target) {
     this.target = target;
+    this.lineHeight = 22 + (15 * 2); // テーブルの一行の高さ [高さ + padding]
+    this.displayRowNum = 13;
+    this.viewHeight = this.lineHeight;
   }
 
   exec(cb) {
     this.target.addEventListener('scroll', () => {
-      cb(this.target.scrollTop);
+      const top = this.target.scrollTop;
+      const startIndex = parseInt(top / this.viewHeight, 10);
+      cb(this, top);
     });
-    /*
-    const observer = new IntersectionObserver((changes) => {
-      for (const change of changes) {
-        console.log('------------------>>>');
-        console.log(change.time); // 変更が起こったタイムスタン>プ
-        console.log(change.rootBounds); // ルートとなる領域
-        console.log(change.boundingClientRect); // ターゲットの矩形
-        console.log(change.intersectionRect); // ルートとガーゲットの交差町>域
-        console.log(change.intersectionRatio); // 交差領域がターゲットの矩形>に占める割合
-        console.log(change.target); // ターゲットとなるsp
-        console.log('<<<------------------');
-      }
-    }, {});
-    observer.observe(this.target);
-    */
+  }
+
+  split(lines, start = 0) {
+    return lines.slice(start, this.displayRowNum);
   }
 }
 

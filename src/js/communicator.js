@@ -4,27 +4,27 @@ class Communicator {
     const {
       ipcRenderer
     } = require('electron');
-    this.comt = ipcRenderer;
+    this.communicator = ipcRenderer;
   }
 
   sendSync(label, object) {
-    return this.comt.sendSync(label, object);
+    return this.communicator.sendSync(label, object);
   }
 
   send(label, object) {
-    this.comt.send(label, object);
+    this.communicator.send(label, object);
   }
 
   on(eventName, cb, isOnce = false) {
     if (!isOnce) {
-      this.comt.on(eventName, cb);
+      this.communicator.on(eventName, cb);
     } else {
-      this.comt.once(eventName, cb);
+      this.communicator.once(eventName, cb);
     }
   }
 
   once(eventName, cb) {
-    this.comt.on(eventName, cb);
+    this.communicator.on(eventName, cb);
   }
 }
 

@@ -83,16 +83,30 @@
       e.preventDefault();
       const forms = {};
       _.forEach(e.target, (tgt, idx) => {
-        switch (tgt.type) {
+        const {
+          type,
+          name,
+          value,
+          checked
+        } = tgt;
+        switch (type) {
           case 'radio':
-            console.log();
-            if (tgt.checked) _.set(forms, tgt.name, Number(tgt.value));
+            if (checked) _.set(forms, name, Number(value));
             break;
           case 'text':
           case 'password':
-            _.set(forms, tgt.name, tgt.value);
+            _.set(forms, name, value);
             break;
         }
+        // switch (tgt.type) {
+        //   case 'radio':
+        //     if (tgt.checked) _.set(forms, tgt.name, Number(tgt.value));
+        //     break;
+        //   case 'text':
+        //   case 'password':
+        //     _.set(forms, tgt.name, tgt.value);
+        //     break;
+        // }
       });
       const connection = await mysql.getConnection(forms);
       connection.connect((err) => {

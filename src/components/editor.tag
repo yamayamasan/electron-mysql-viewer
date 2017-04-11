@@ -15,12 +15,6 @@
         <button class="waves-effect waves-light btn btn-floating">
           <i class="material-icons medium">dashboard</i>
         </button>
-
-        <!--
-        <button class="waves-effect waves-light btn btn-floating" onclick={ toggleSize }>
-          <i class="material-icons medium">pause_circle_outline</i>
-        </button>
-        -->
       </div>
     </div>
   </div>
@@ -57,15 +51,32 @@
       }
     };
 
-    const execRun = () => {
-      const text = editor.getCopyText() || editor.getValue();
-      state.set('execquery', text.trim());
-      state.set('editor-text', editor.getValue());
+    const execRun = (query = null) => {
+      const text = (query) ? query : (editor.getCopyText() || editor.getValue());
+      state.removes([
+        'total',
+        'fields',
+        'rows',
+        'localtime',
+        'desc',
+      ]);
+      state.sets({
+        execquery: text.trim(),
+        editorText: editor.getValue(),
+        queryInit: true,
+      });
     }
 
     const execStop = () => {
       mysql.processKill();
     };
+
+    state.observe('exec_select_table', (table) => {
+      const query = `select * from ${table};`;
+      editor.gotoLine(editor.getSession().getLength() + 1);
+      editor.insert(`\n\n${query}`);
+      execRun(query);
+    });
 
     toggleSize() {
       console.log(editor.getSession().getMarkers())

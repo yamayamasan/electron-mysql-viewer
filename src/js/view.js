@@ -38,8 +38,12 @@ class View {
     if (isUpdate) this.context.update();
   }
 
-  fire() {
-    this.context.update();
+  fire(values = null) {
+    if (values) {
+      this.context.update(values);
+    } else {
+      this.context.update();
+    }
   }
 }
 

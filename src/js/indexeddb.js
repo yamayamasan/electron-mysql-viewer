@@ -3,16 +3,14 @@ const Dexie = require('dexie');
 class Indexeddb {
 
   constructor(dbname) {
-    console.log('[DB Name]:', dbname);
     this.db = new Dexie(dbname);
     this.table = null;
   }
 
   init(dbschemas) {
     dbschemas.forEach((dbschema) => {
-      const schema = this.parseSchema(dbschema.schema);
-      console.log('[DB schema]:', schema);
-      this.db.version(schema.version).stores(schema.tables);
+      const { version, tables } = this.parseSchema(dbschema.schema);
+      this.db.version(version).stores(tables);
     });
     this.db.open();
   }
@@ -31,7 +29,8 @@ class Indexeddb {
 
   get(tblname, conditions) {
     return new Promise((resolve) => {
-      const key = Object.keys(conditions)[0];
+      // const key = Object.keys(conditions)[0];
+      const [key] = Object.keys(conditions);
       this.db[tblname].where(key).equals(conditions[key]).first((data) => {
         resolve(data || null);
       });

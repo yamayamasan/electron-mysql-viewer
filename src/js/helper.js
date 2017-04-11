@@ -36,10 +36,10 @@ class Helper {
 
   convval(val, v, desc) {
     if (desc[v] && val !== null) {
-      if (desc[v].Type === 'date') return moment(val).format('YYYY-MM-DD');
-      if (desc[v].Type === 'datetime') return moment(val).format('YYYY-MM-DD HH:mm:ss');
+      if (desc[v].Type === 'date') return moment(val).format(FORMAT.DATE);
+      if (desc[v].Type === 'datetime') return moment(val).format(FORMAT.DATETIME);
     }
-    return val;
+    return val === null ? 'NULL' : val;
   }
 
   fmtDatas(rows) {

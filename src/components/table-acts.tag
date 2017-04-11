@@ -42,7 +42,12 @@
     csvDownload() {
       const fields = view.get('fields');
       const rows = view.get('rows');
-      csv.export(fields, rows);
+      // csv.export(fields, rows);
+      // const worker = WorkerClient.load(`${JS_DIR}/ww/rowdatas`);
+      // worker.postMessage({
+      //   fields,
+      //   rows
+      // });
     }
 
     updateFilter() {
