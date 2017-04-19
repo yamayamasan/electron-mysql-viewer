@@ -1,0 +1,20 @@
+{
+  "name": "img-viewer",
+  "version": "0.0.1",
+  "main": "main.js",
+  "license": "MIT",
+  "dependencies": {
+    "del": "^2.2.2",
+    "electron-packager": "^8.6.0",
+    "fs-extra": "^2.1.2",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "node-zip": "^1.1.1",
+    "riot": "^3.4.1",
+    "unzip": "^0.1.11",
+    "unzip2": "^0.2.5",
+    "uuid": "^3.0.1",
+    "winrarjs": "^0.0.15",
+    "zip-unzip-promise": "^1.0.1"
+  }
+}
